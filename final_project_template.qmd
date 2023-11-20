@@ -17,19 +17,21 @@ execute:
 
 ### Overview
 
-Per- and polyfluoroalkyl substances (PFAS) are a class of chemicals that pollute our environment. They are ubiquitous, and nearly in 99% of all humans on earth. Unfortunately, some members have been associated to various health outcomes, including reproductive health. Using supervised machine learning, the objective of the project is to predict the reproductive toxicity of PFAS members by characterizing their chemotypes and relating them to known biological outcomes. The data for the project was obtained from Tox 21 and  CompToxAI. Dr. Joseph Romano assisted with obtaining the data while Dr. Trevor Penning assisted by redefining the assays chosen as the biological endpoint. 
-
-Due to growing scrutiny by civilian and governmental organizations, many legacy PFAS have been pressured to be rolled back. However, in order to maintain profits, producers have been creating new PFAS. Many of the new "next generation" PFAS take advantage of the lack of toxicological data available to claim to be safer, despite no studies suggesting safety. The necessity for predicting toxicity from PFAS structure knowledge is then evident. The significance of my project is to create a machine learning model to predict toxicity in novel PFAS for the ultimate goal to prioritize further studies and to help guide PFAS production towards a less toxic future. 
+Per- and polyfluoroalkyl substances (PFAS) are a class of chemicals that pollute our environment. They are ubiquitous, and nearly in 99% of all humans on earth. Unfortunately, some members have been associated to various health outcomes, including reproductive health. Using supervised machine learning, the objective of the project is to predict the reproductive toxicity of PFAS members by characterizing their chemotypes and relating them to known biological outcomes. The data for the project was obtained from Tox 21 and  CompToxAI. Dr. Joseph Romano assisted with obtaining the data while Dr. Trevor Penning assisted by redefining the assays chosen as the biological endpoint. The project hopes to help provide more information on the toxicology of unknown PFAS as well as communicate the properties that lead to that toxicity.
 
 All data is publicly available on my github account, TOX21, and CompToxAI.
 
-GitHub repository:
+GitHub repository: [AndreaHuacachino/BMIN503/FinalProject](https://github.com/AndreaHuacachino/BMIN503_Final_Project)
 
 ### Introduction
 
-Describe the problem addressed, its significance, and some background to motivate the problem.
+Environmental toxicants are man made chemicals that are present in our environment due to industry and manufacturing plants. Many of these compounds are detrimental to human health. PFAS are a class of organofluorine compounds containing multiple fluorine atoms attached to an alkyl chain. These compounds differ in connectivity or carbon chain length. There exist nearly 15,000 synthetic chemicals, reported by the U.S. Environmental Protection Agency. The most famous example is perfluorooctanoic acid (PFOA), a prolific toxicant. It\'s production was widespread in the US until its ban in the 1990\'s. It is known to be an endocrine disrupting chemical (EDC) which are toxicants that lead to hormone regulation dysregulation. 
 
-Explain why your problem is interdisciplinary, what fields can contribute to its understanding, and incorporate background related to what you learned from meeting with faculty/staff.
+Structure activity relation (QSAR) studies are based on the chemical hypothesis that the structure of a molecule contains the necessary information as to how it will interact with a target (often times a protein), thus linking the molecule to a chemical or biological process. SAR studies are a well known tool in the pharmaceutical field to develop small molecule drugs for various symptoms and diseases. Quantitative (Q)SAR is a special case of SAR where relationships become quantified. QSAR is particularly important in predictions, often using machine learning approaches to build strong models. Of the possible algorithms to use, QSAR studies have historically relied on random forest due to its collection of desired features.
+
+Due to growing scrutiny by civilian and governmental organizations, many legacy PFAS have been pressured to be rolled back. However, in order to maintain profits, producers have been creating new PFAS. Many of the new "next generation" PFAS take advantage of the lack of toxicological data available to claim to be safer, despite no studies suggesting safety. The necessity for predicting toxicity from PFAS structure knowledge is then evident. The significance of my project is to create a machine learning model to predict toxicity in novel PFAS for the ultimate goal to prioritize further studies and to help guide PFAS production towards a less toxic future. 
+
+This research question is interdisciplinary by nature due to its ties with environmental toxicology. The field of environmental toxicology encompasses the fields of biology, chemistry, statistics, medicine, and recently, computer science. Advances in computer science have allowed predictive toxicology, a subset of toxicology, to flourish. This project falls within the field of predictive toxicology.
 
 ### Methods
 
@@ -122,6 +124,7 @@ Making random forest engine
 ```{r}
 
 
+#general
 rf_cls_spec <- 
   rand_forest(trees = 100, min_n = 5) |> 
   set_engine("randomForest", importance = TRUE) |>
@@ -133,20 +136,24 @@ rf_cls_spec
 
 #making dataset include factors
 ar_bla_agonist_p1.2 <- ar_bla_agonist_p1 |>
-  mutate(target = factor(target, levels = c(0, 1), 
-                           labels = c("nontoxic","toxic")))
+  mutate(target = factor(target, levels = c("0", "1"), 
+                           labels = c("0","1")))
 
 
 ar_bla_agonist_p1.2$target
 
 
-#Making model
+#Making model of ar_bla_agonist_p1
 ar_bla_agonist_p1.rf_cls_fit <- rf_cls_spec |>
   fit(target ~ ., data = ar_bla_agonist_p1.2)
 
 
-ar_bla_agonist_p1.rf_cls_fit
+#gini_importance score
+ar_bla_agonist_p1.gini_importance <- vip(ar_bla_agonist_p1.rf_cls_fit)
+ar_bla_agonist_p1.gini_importance
 
+
+#predictions 
 ar_bla_agonist_p1.rf.pred.values <- bind_cols(
   truth = ar_bla_agonist_p1.2$target,
   predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2),
@@ -167,7 +174,7 @@ autoplot(roc_curve(ar_bla_agonist_p1.rf.pred.values,
 rf_workflow <-
   workflow() |>
   add_model(rf_cls_spec) |>
-  add_formula(survived ~ .)
+  add_formula(target ~ .)
 
 set.seed(1234)
 rf_fit_cv <-
