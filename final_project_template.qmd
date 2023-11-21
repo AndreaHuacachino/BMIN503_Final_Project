@@ -109,14 +109,6 @@ erb_bla_p1 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN5
 
 
 
-#PPAR-gamma Assays
-
-pparg_bla_agonist_p1 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/andrea_tox21-pparg-bla-agonist-p1.csv', header = TRUE)
-
-pparg_bla_antagonist_p1 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/andrea_tox21-pparg-bla-antagonist-p1.csv', header = TRUE)
-
-
-head(ar_bla_agonist_p1)
 ```
 
 Making random forest engine
@@ -171,22 +163,22 @@ ar_bla_agonist_p1.rf_cls_fit |>
 #I keep getting Error in predict.randomForest(object = object$fit, newdata = new_data) : New factor levels not present in the training data SAD 
 
 #cross validation 
-set.seed(1234)
-ar_bla_agonist_p1.folds <- vfold_cv(ar_bla_agonist_p1.2, v=10)
-ar_bla_agonist_p1.folds
+#set.seed(1234)
+#ar_bla_agonist_p1.folds <- vfold_cv(ar_bla_agonist_p1.2, v=10)
+#ar_bla_agonist_p1.folds
 
-set.seed(1234)
-ar_bla_agonist_p1.cv <-
-  rf_workflow |>
-  fit_resamples(ar_bla_agonist_p1.folds, 
-                control = control_resamples(save_pred = TRUE)) #18 mins
+#set.seed(1234)
+#ar_bla_agonist_p1.cv <-
+#  rf_workflow |>
+#  fit_resamples(ar_bla_agonist_p1.folds, 
+#                control = control_resamples(save_pred = TRUE)) #18 mins
 
-collect_metrics(ar_bla_agonist_p1.cv)
+#collect_metrics(ar_bla_agonist_p1.cv)
 
-ar_bla_agonist_p1.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_bla_agonist_p1.cv |>
+#  collect_predictions() |>
+#  roc_curve(target, .pred_0) |>
+#  autoplot()
 
 #_________________________________________________________________________________
 
@@ -209,22 +201,22 @@ ar_bla_antagonist_p1.rf_cls_fit |>
   vip()
 
 #cross validation // not run yet bc wait time is longg
-set.seed(1234)
-ar_bla_antagonist_p1.folds <- vfold_cv(ar_bla_antagonist_p1.2, v=10)
-ar_bla_antagonist_p1.folds
+#set.seed(1234)
+#ar_bla_antagonist_p1.folds <- vfold_cv(ar_bla_antagonist_p1.2, v=10)
+#ar_bla_antagonist_p1.folds
 
-set.seed(1234)
-ar_bla_antagonist_p1.cv <-
-  rf_workflow |>
-  fit_resamples(ar_bla_antagonist_p1.folds, 
-                control = control_resamples(save_pred = TRUE)) 
+#set.seed(1234)
+#ar_bla_antagonist_p1.cv <-
+ # rf_workflow |>
+  #fit_resamples(ar_bla_antagonist_p1.folds, 
+  #              control = control_resamples(save_pred = TRUE)) 
 
-collect_metrics(ar_bla_antagonist_p1.cv)
+#collect_metrics(ar_bla_antagonist_p1.cv)
 
-ar_bla_antagonist_p1.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_bla_antagonist_p1.cv |>
+ # collect_predictions() |>
+  #roc_curve(target, .pred_0) |>
+  #autoplot()
 
 #_________________________________________________________________________________
 
@@ -248,22 +240,22 @@ ar_mda_kb2_luc_agonist_p1.rf_cls_fit |>
   vip()
 
 #cross validation // not run yet bc wait time is longg
-set.seed(1234)
-ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
-ar_mda_kb2_luc_agonist_p1.folds
+#set.seed(1234)
+#ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
+#ar_mda_kb2_luc_agonist_p1.folds
 
-set.seed(1234)
-ar_mda_kb2_luc_agonist_p1.cv <-
-  rf_workflow |>
-  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
-                control = control_resamples(save_pred = TRUE)) 
+#set.seed(1234)
+#ar_mda_kb2_luc_agonist_p1.cv <-
+ # rf_workflow |>
+#  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
+ #               control = control_resamples(save_pred = TRUE)) 
 
-collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
+#collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
 
-ar_mda_kb2_luc_agonist_p1.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_mda_kb2_luc_agonist_p1.cv |>
+ # collect_predictions() |>
+#  roc_curve(target, .pred_0) |>
+#  autoplot()
 
 #________________________________________________________________________________
 
@@ -287,22 +279,22 @@ ar_mda_kb2_luc_agonist_p3.rf_cls_fit |>
   vip()
 
 #cross validation // not run yet bc wait time is longg
-set.seed(1234)
-ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
-ar_mda_kb2_luc_agonist_p1.folds
+#set.seed(1234)
+#ar_mda_kb2_luc_agonist_p3.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p3.2, v=10)
+#ar_mda_kb2_luc_agonist_p3.folds
 
-set.seed(1234)
-ar_mda_kb2_luc_agonist_p1.cv <-
-  rf_workflow |>
-  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
-                control = control_resamples(save_pred = TRUE)) 
+#set.seed(1234)
+#ar_mda_kb2_luc_agonist_p3.cv <-
+#  rf_workflow |>
+#  fit_resamples(ar_mda_kb2_luc_agonist_p3.folds, 
+#                control = control_resamples(save_pred = TRUE)) 
 
-collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
+#collect_metrics(ar_mda_kb2_luc_agonist_p3.cv)
 
-ar_mda_kb2_luc_agonist_p1.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_mda_kb2_luc_agonist_p3.cv |>
+#  collect_predictions() |>
+#  roc_curve(target, .pred_0) |>
+#  autoplot()
 
 #________________________________________________________________________________
 
@@ -326,25 +318,25 @@ ar_mda_kb2_luc_antagonist_p1.rf_cls_fit |>
   vip()
 
 #cross validation // not run yet bc wait time is longg
-set.seed(1234)
-ar_mda_kb2_luc_antagonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p1.2, v=10)
-ar_mda_kb2_luc_antagonist_p1.folds
+#set.seed(1234)
+#ar_mda_kb2_luc_antagonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p1.2, v=10)
+#ar_mda_kb2_luc_antagonist_p1.folds
 
-set.seed(1234)
-ar_mda_kb2_luc_antagonist_p1.cv <-
-  rf_workflow |>
-  fit_resamples(ar_mda_kb2_luc_antagonist_p1.folds, 
-                control = control_resamples(save_pred = TRUE)) 
+#set.seed(1234)
+#ar_mda_kb2_luc_antagonist_p1.cv <-
+ # rf_workflow |>
+#  fit_resamples(ar_mda_kb2_luc_antagonist_p1.folds, 
+ #               control = control_resamples(save_pred = TRUE)) 
 
-collect_metrics(ar_mda_kb2_luc_antagonist_p1.cv)
+#collect_metrics(ar_mda_kb2_luc_antagonist_p1.cv)
 
-ar_mda_kb2_luc_antagonist_p1.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_mda_kb2_luc_antagonist_p1.cv |>
+ # collect_predictions() |>
+  #roc_curve(target, .pred_0) |>
+  #autoplot()
 
 
-#________________________________________________________________________________
+#_______________________________________________________________________________
 
 #ar_mda_kb2_luc_antagonist_p2
 
@@ -366,22 +358,189 @@ ar_mda_kb2_luc_antagonist_p2.rf_cls_fit |>
   vip()
 
 #cross validation // not run yet bc wait time is longg
-set.seed(1234)
-ar_mda_kb2_luc_antagonist_p2.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p2.2, v=10)
-ar_mda_kb2_luc_antagonist_p2.folds
+#set.seed(1234)
+#ar_mda_kb2_luc_antagonist_p2.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p2.2, v=10)
+#ar_mda_kb2_luc_antagonist_p2.folds
 
-set.seed(1234)
-ar_mda_kb2_luc_antagonist_p2.cv <-
-  rf_workflow |>
-  fit_resamples(ar_mda_kb2_luc_antagonist_p2.folds, 
-                control = control_resamples(save_pred = TRUE)) 
+#set.seed(1234)
+#ar_mda_kb2_luc_antagonist_p2.cv <-
+ # rf_workflow |>
+  #fit_resamples(ar_mda_kb2_luc_antagonist_p2.folds, 
+   #             control = control_resamples(save_pred = TRUE)) 
 
-collect_metrics(ar_mda_kb2_luc_antagonist_p2.cv)
+#collect_metrics(ar_mda_kb2_luc_antagonist_p2.cv)
 
-ar_mda_kb2_luc_antagonist_p2.cv |>
-  collect_predictions() |>
-  roc_curve(target, .pred_0) |>
-  autoplot()
+#ar_mda_kb2_luc_antagonist_p2.cv |>
+#  collect_predictions() |>
+#  roc_curve(target, .pred_0) |>
+#  autoplot()
+```
+
+Estrogen Receptor based assays
+
+```{r}
+#er_bla_agonist_p2
+
+#making dataset include factors
+er_bla_agonist_p2.2 <- er_bla_agonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+er_bla_agonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_bla_agonist_p2.2)
+er_bla_agonist_p2.rf_cls_fit
+
+#gini_importance score
+er_bla_agonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
+#_______________________________________________________________________________
+#er_bla_antagonist_p1
+
+#making dataset include factors
+er_bla_antagonist_p1.2 <- er_bla_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model 
+er_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_bla_antagonist_p1.2)
+er_bla_antagonist_p1.rf_cls_fit
+
+#gini_importance score
+er_bla_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
+#_______________________________________________________________________________
+#er_luc_bg1_4e2_agonist_p2
+
+#making dataset include factors
+er_luc_bg1_4e2_agonist_p2.2 <- er_luc_bg1_4e2_agonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+er_luc_bg1_4e2_agonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p2.2)
+er_luc_bg1_4e2_agonist_p2.rf_cls_fit
+
+#gini_importance score
+er_luc_bg1_4e2_agonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
+
+#_______________________________________________________________________________
+
+#er_luc_bg1_4e2_agonist_p4
+
+
+#making dataset include factors
+er_luc_bg1_4e2_agonist_p4.2 <- er_luc_bg1_4e2_agonist_p4 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+er_luc_bg1_4e2_agonist_p4.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p4.2)
+er_luc_bg1_4e2_agonist_p4.rf_cls_fit
+
+#gini_importance score
+er_luc_bg1_4e2_agonist_p4.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
+#_______________________________________________________________________________
+
+#er_luc_bg1_4e2_antagonist_p1 
+
+
+#making dataset include factors
+er_luc_bg1_4e2_antagonist_p1.2 <- er_luc_bg1_4e2_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+er_luc_bg1_4e2_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p1.2)
+er_luc_bg1_4e2_antagonist_p1.rf_cls_fit
+
+#gini_importance score
+er_luc_bg1_4e2_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
+#_______________________________________________________________________________
+
+#er_luc_bg1_4e2_antagonist_p2
+
+
+#making dataset include factors
+er_luc_bg1_4e2_antagonist_p2.2 <- er_luc_bg1_4e2_antagonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+er_luc_bg1_4e2_antagonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p2.2)
+er_luc_bg1_4e2_antagonist_p2.rf_cls_fit
+
+#gini_importance score
+er_luc_bg1_4e2_antagonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+```
+
+Estrogen receptor beta
+
+```{r}
+#erb_bla_antagonist_p1
+
+
+#making dataset include factors
+erb_bla_antagonist_p1.2 <- erb_bla_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+erb_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = erb_bla_antagonist_p1.2)
+erb_bla_antagonist_p1.rf_cls_fit
+
+#gini_importance score
+erb_bla_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#_______________________________________________________________________________
+
+#erb_bla_p1
+
+
+#making dataset include factors
+erb_bla_p1.2 <- erb_bla_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+
+#Making model
+erb_bla_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = erb_bla_p1.2)
+erb_bla_p1.rf_cls_fit
+
+#gini_importance score
+erb_bla_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+
 ```
 
 ### Results
