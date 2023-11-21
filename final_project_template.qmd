@@ -25,7 +25,7 @@ GitHub repository: [AndreaHuacachino/BMIN503/FinalProject](https://github.com/An
 
 ### Introduction
 
-Environmental toxicants are man made chemicals that are present in our environment due to industry and manufacturing plants. Many of these compounds are detrimental to human health. PFAS are a class of organofluorine compounds containing multiple fluorine atoms attached to an alkyl chain. These compounds differ in connectivity or carbon chain length. There exist nearly 15,000 synthetic chemicals, reported by the U.S. Environmental Protection Agency. The most famous example is perfluorooctanoic acid (PFOA), a prolific toxicant. It\'s production was widespread in the US until its ban in the 1990\'s. It is known to be an endocrine disrupting chemical (EDC) which are toxicants that lead to hormone regulation dysregulation. 
+Environmental toxicants are man made chemicals that are present in our environment due to industry and manufacturing plants. Many of these compounds are detrimental to human health. PFAS are a class of organofluorine compounds containing multiple fluorine atoms attached to an alkyl chain. These compounds differ in connectivity or carbon chain length. There exist nearly 15,000 synthetic chemicals, reported by the U.S. Environmental Protection Agency. The most famous example is perfluorooctanoic acid (PFOA), a prolific toxicant. It's production was widespread in the US until its ban in the 1990's. It is known to be an endocrine disrupting chemical (EDC) which are toxicants that lead to hormone regulation dysregulation. 
 
 Structure activity relation (QSAR) studies are based on the chemical hypothesis that the structure of a molecule contains the necessary information as to how it will interact with a target (often times a protein), thus linking the molecule to a chemical or biological process. SAR studies are a well known tool in the pharmaceutical field to develop small molecule drugs for various symptoms and diseases. Quantitative (Q)SAR is a special case of SAR where relationships become quantified. QSAR is particularly important in predictions, often using machine learning approaches to build strong models. Of the possible algorithms to use, QSAR studies have historically relied on random forest due to its collection of desired features.
 
@@ -122,71 +122,265 @@ head(ar_bla_agonist_p1)
 Making random forest engine
 
 ```{r}
-
-
 #general
 rf_cls_spec <- 
   rand_forest(trees = 100, min_n = 5) |> 
   set_engine("randomForest", importance = TRUE) |>
   set_mode("classification")
 rf_cls_spec
+#larger than 100 trees took too long to run
 
 
-#ar_bla_agonist_p1
-
-#making dataset include factors
-ar_bla_agonist_p1.2 <- ar_bla_agonist_p1 |>
-  mutate(target = factor(target, levels = c("0", "1"), 
-                           labels = c("0","1")))
-
-
-ar_bla_agonist_p1.2$target
-
-
-#Making model of ar_bla_agonist_p1
-ar_bla_agonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_bla_agonist_p1.2)
-
-
-#gini_importance score
-ar_bla_agonist_p1.gini_importance <- vip(ar_bla_agonist_p1.rf_cls_fit)
-ar_bla_agonist_p1.gini_importance
-
-
-#predictions 
-ar_bla_agonist_p1.rf.pred.values <- bind_cols(
-  truth = ar_bla_agonist_p1.2$target,
-  predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2),
-  predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2, type = "prob"))
-
-#I keep getting Error in predict.randomForest(object = object$fit, newdata = new_data) : New factor levels not present in the training data SAD 
-
-
-
-
-autoplot(roc_curve(ar_bla_agonist_p1.rf.pred.values, 
-                   truth, .pred_died))
-
-
-
-#cross validation stuff
-
+#general cross validation
 rf_workflow <-
   workflow() |>
   add_model(rf_cls_spec) |>
   add_formula(target ~ .)
 
+
+
+```
+
+Androgen based assays
+
+```{r}
+#ar_bla_agonist_p1
+
+#making dataset include factors
+ar_bla_agonist_p1.2 <- ar_bla_agonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_bla_agonist_p1.2)
+
+#Making model of ar_bla_agonist_p1
+ar_bla_agonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_bla_agonist_p1.2)
+ar_bla_agonist_p1.rf_cls_fit
+
+#gini_importance score
+ar_bla_agonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#predictions 
+#ar_bla_agonist_p1.rf.pred <- bind_cols(
+ #truth = ar_bla_agonist_p1.2$target,
+  #predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2),
+  #predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2, type = "prob"))
+
+#I keep getting Error in predict.randomForest(object = object$fit, newdata = new_data) : New factor levels not present in the training data SAD 
+
+#cross validation 
 set.seed(1234)
-rf_fit_cv <-
+ar_bla_agonist_p1.folds <- vfold_cv(ar_bla_agonist_p1.2, v=10)
+ar_bla_agonist_p1.folds
+
+set.seed(1234)
+ar_bla_agonist_p1.cv <-
   rf_workflow |>
-  fit_resamples(titanic.training.folds, 
-                control = control_resamples(save_pred = TRUE))
+  fit_resamples(ar_bla_agonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #18 mins
 
-collect_metrics(rf_fit_cv)
+collect_metrics(ar_bla_agonist_p1.cv)
 
-rf_fit_cv |>
+ar_bla_agonist_p1.cv |>
   collect_predictions() |>
-  roc_curve(survived, .pred_died) |>
+  roc_curve(target, .pred_0) |>
+  autoplot()
+
+#_________________________________________________________________________________
+
+#ar_bla_antagonist_p1
+
+#making dataset include factors
+ar_bla_antagonist_p1.2 <- ar_bla_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_bla_antagonist_p1.2)
+
+#Making model
+ar_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_bla_antagonist_p1.2)
+ar_bla_antagonist_p1.rf_cls_fit
+
+#gini_importance score
+ar_bla_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation // not run yet bc wait time is longg
+set.seed(1234)
+ar_bla_antagonist_p1.folds <- vfold_cv(ar_bla_antagonist_p1.2, v=10)
+ar_bla_antagonist_p1.folds
+
+set.seed(1234)
+ar_bla_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_bla_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_bla_antagonist_p1.cv)
+
+ar_bla_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0) |>
+  autoplot()
+
+#_________________________________________________________________________________
+
+#ar_mda_kb2_luc_agonist_p1
+
+
+#making dataset include factors
+ar_mda_kb2_luc_agonist_p1.2 <- ar_mda_kb2_luc_agonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_mda_kb2_luc_agonist_p1.2)
+
+#Making model
+ar_mda_kb2_luc_agonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p1.2)
+ar_mda_kb2_luc_agonist_p1.rf_cls_fit
+
+#gini_importance score
+ar_mda_kb2_luc_agonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation // not run yet bc wait time is longg
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
+ar_mda_kb2_luc_agonist_p1.folds
+
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
+
+ar_mda_kb2_luc_agonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0) |>
+  autoplot()
+
+#________________________________________________________________________________
+
+#ar_mda_kb2_luc_agonist_p3
+
+
+#making dataset include factors
+ar_mda_kb2_luc_agonist_p3.2 <- ar_mda_kb2_luc_agonist_p3 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_mda_kb2_luc_agonist_p3.2)
+
+#Making model
+ar_mda_kb2_luc_agonist_p3.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p3.2)
+ar_mda_kb2_luc_agonist_p3.rf_cls_fit
+
+#gini_importance score
+ar_mda_kb2_luc_agonist_p3.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation // not run yet bc wait time is longg
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
+ar_mda_kb2_luc_agonist_p1.folds
+
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
+
+ar_mda_kb2_luc_agonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0) |>
+  autoplot()
+
+#________________________________________________________________________________
+
+#ar_mda_kb2_luc_antagonist_p1
+
+
+#making dataset include factors
+ar_mda_kb2_luc_antagonist_p1.2 <- ar_mda_kb2_luc_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_mda_kb2_luc_antagonist_p1.2)
+
+#Making model
+ar_mda_kb2_luc_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p1.2)
+ar_mda_kb2_luc_antagonist_p1.rf_cls_fit
+
+#gini_importance score
+ar_mda_kb2_luc_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation // not run yet bc wait time is longg
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p1.2, v=10)
+ar_mda_kb2_luc_antagonist_p1.folds
+
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_mda_kb2_luc_antagonist_p1.cv)
+
+ar_mda_kb2_luc_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0) |>
+  autoplot()
+
+
+#________________________________________________________________________________
+
+#ar_mda_kb2_luc_antagonist_p2
+
+
+#making dataset include factors
+ar_mda_kb2_luc_antagonist_p2.2 <- ar_mda_kb2_luc_antagonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+head(ar_mda_kb2_luc_antagonist_p2.2)
+
+#Making model
+ar_mda_kb2_luc_antagonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p2.2)
+ar_mda_kb2_luc_antagonist_p2.rf_cls_fit
+
+#gini_importance score
+ar_mda_kb2_luc_antagonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation // not run yet bc wait time is longg
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p2.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p2.2, v=10)
+ar_mda_kb2_luc_antagonist_p2.folds
+
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p2.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_antagonist_p2.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_mda_kb2_luc_antagonist_p2.cv)
+
+ar_mda_kb2_luc_antagonist_p2.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0) |>
   autoplot()
 ```
 
