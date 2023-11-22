@@ -19,19 +19,25 @@ execute:
 
 Per- and polyfluoroalkyl substances (PFAS) are a class of chemicals that pollute our environment. They are ubiquitous, and nearly in 99% of all humans on earth. Unfortunately, some members have been associated to various health outcomes, including reproductive health. Using supervised machine learning, the objective of the project is to predict the reproductive toxicity of PFAS members by characterizing their chemotypes and relating them to known biological outcomes. The data for the project was obtained from Tox 21 and  CompToxAI. Dr. Joseph Romano assisted with obtaining the data while Dr. Trevor Penning assisted by redefining the assays chosen as the biological endpoint. The project hopes to help provide more information on the toxicology of unknown PFAS as well as communicate the properties that lead to that toxicity.
 
-All data is publicly available on my github account, TOX21, and CompToxAI.
+All data is publicly available on my github repository, TOX21, and CompToxAI.
 
 GitHub repository: [AndreaHuacachino/BMIN503/FinalProject](https://github.com/AndreaHuacachino/BMIN503_Final_Project)
 
 ### Introduction
 
-Environmental toxicants are man made chemicals that are present in our environment due to industry and manufacturing plants. Many of these compounds are detrimental to human health. PFAS are a class of organofluorine compounds containing multiple fluorine atoms attached to an alkyl chain. These compounds differ in connectivity or carbon chain length. There exist nearly 15,000 synthetic chemicals, reported by the U.S. Environmental Protection Agency. The most famous example is perfluorooctanoic acid (PFOA), a prolific toxicant. It's production was widespread in the US until its ban in the 1990's. It is known to be an endocrine disrupting chemical (EDC) which are toxicants that lead to hormone regulation dysregulation. 
+Environmental toxicants are man made chemicals that are present in our environment due to industry and manufacturing plants. Many of these compounds are detrimental to human health. PFAS are a class of organofluorine compounds containing multiple fluorine atoms attached to an alkyl chain. These compounds differ in connectivity or carbon chain length. There exist nearly 15,000 synthetic chemicals, reported by the U.S. Environmental Protection Agency. The most famous example is perfluorooctanoic acid (PFOA), a prolific toxicant. It's production was widespread in the US until its ban in the 1990's. It is known to be an endocrine disrupting chemical (EDC) which are toxicants that lead to hormone dysregulation. While hormones affect many aspects of the body, one chief responsibility is the regulation of the reproductive system. Women with PFOA exposure have been reported to experience higher levels of infertility as well as other reproductive issues. Unfortunately, mechanistic knowledge of this dysregulation at the molecular level is greatly unknown. Fortunately, the Environmental Protection Agency has attempted to understand this mechanism using in vitro biochemical assays. Of particular interest to this project, assays for the androgen and the estrogen receptor have been performed extensively. This data is publicly available for further studies.
+
+Due to growing scrutiny by civilian and governmental organizations, many legacy PFAS have been pressured to be rolled back. However, in order to maintain profits, producers have been creating new PFAS. Many of the new "next generation" PFAS take advantage of the lack of toxicological data available to claim to be safer, despite no studies suggesting safety. The necessity for predicting toxicity from PFAS structure knowledge is then evident. The significance of my project is to create machine learning models to predict toxicity in novel PFAS for the ultimate goal to prioritize further studies and to help guide PFAS production towards a less toxic future. 
 
 Structure activity relation (QSAR) studies are based on the chemical hypothesis that the structure of a molecule contains the necessary information as to how it will interact with a target (often times a protein), thus linking the molecule to a chemical or biological process. SAR studies are a well known tool in the pharmaceutical field to develop small molecule drugs for various symptoms and diseases. Quantitative (Q)SAR is a special case of SAR where relationships become quantified. QSAR is particularly important in predictions, often using machine learning approaches to build strong models. Of the possible algorithms to use, QSAR studies have historically relied on random forest due to its collection of desired features.
 
-Due to growing scrutiny by civilian and governmental organizations, many legacy PFAS have been pressured to be rolled back. However, in order to maintain profits, producers have been creating new PFAS. Many of the new "next generation" PFAS take advantage of the lack of toxicological data available to claim to be safer, despite no studies suggesting safety. The necessity for predicting toxicity from PFAS structure knowledge is then evident. The significance of my project is to create a machine learning model to predict toxicity in novel PFAS for the ultimate goal to prioritize further studies and to help guide PFAS production towards a less toxic future. 
-
 This research question is interdisciplinary by nature due to its ties with environmental toxicology. The field of environmental toxicology encompasses the fields of biology, chemistry, statistics, medicine, and recently, computer science. Advances in computer science have allowed predictive toxicology, a subset of toxicology, to flourish. This project falls within the field of predictive toxicology.
+
+**Dataset description**
+
+The datasets used are a combination of datasets from Tox21 and CompToxAI. Tox21 is a database maintained by the U.S. Environmental Protection Agency (EPA), National Toxicology Program (NTP), National Center for Advancing Translational Sciences (NCATS), and the Food and Drug Administration (FDA). Tox21 uses approximately 70 high-throughput assays covering over 125 important processes in the body to generate information about thousands of compounds. I have chosen the assays (see list in methods) most relevant to the project. All assays contained Androgen Receptor and Estrogen Receptor targets. The data reported in Tox21 assays contains pharacological information such as idenity, assay outcome, AC50, efficacy, activity, hill coefficient, among other information. In order to reduce the variables of outcomes, CompToxAI was used.
+
+ComptoxAI is a toolkit designed to enable AI and data science research in computational toxicology maintained by Joe Romano. ComptoxAI has a function to build datasets for QSAR. In this, it will predict how likely it is to be toxic using all the assay information from Tox21 and reduce it to one value. CompToxAI also provides structural data of the compounds which is not supplied by the original Tox21 assay data. The structural data is reported in a tabular fashion. Each row of the table is an individual compound while each column reports the presence or absence of a particular phenotype. All data is reported in binary (0 or 1) except for the ID column.
 
 ### Methods
 
@@ -51,7 +57,6 @@ Describe the data used and general methodological approach. Subsequently, incorp
 
 
 
-
 library(tidyverse)
 library(kernlab)
 library(randomForest)
@@ -60,6 +65,7 @@ library(tidymodels)
 tidymodels_prefer()
 library(dotwhisker)
 library(vip)
+library(ggplot2)
 
 ```
 
@@ -102,16 +108,11 @@ er_luc_bg1_4e2_antagonist_p1 <- read.csv('https://raw.githubusercontent.com/Andr
 
 er_luc_bg1_4e2_antagonist_p2 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/andrea_tox21-er-luc-bg1-4e2-antagonist-p2.csv', header = TRUE)
 
-# Estrogen Receptor subtype: beta
-erb_bla_antagonist_p1 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/andrea_tox21-erb-bla-antagonist-p1.csv', header = TRUE)
-
-erb_bla_p1 <- read.csv('https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/andrea_tox21-erb-bla-p1.csv', header = TRUE)
-
 
 
 ```
 
-Making random forest engine
+Making random forest engine and cross validation workflow
 
 ```{r}
 #general
@@ -135,19 +136,22 @@ rf_workflow <-
 
 Androgen based assays
 
-```{r}
-#ar_bla_agonist_p1
+Assay: ar_bla_agonist_p1
 
+```{r}
 #making dataset include factors
 ar_bla_agonist_p1.2 <- ar_bla_agonist_p1 |>
   mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_bla_agonist_p1.2)
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+ar_bla_agonist_p1.3 <- ar_bla_agonist_p1.2 |> #to get rid of ID
+  select(-X)
 
 #Making model of ar_bla_agonist_p1
+set.seed(1234)
 ar_bla_agonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_bla_agonist_p1.2)
-ar_bla_agonist_p1.rf_cls_fit
+  fit(target ~ ., data = ar_bla_agonist_p1.3)
+
 
 #gini_importance score
 ar_bla_agonist_p1.rf_cls_fit |> 
@@ -159,223 +163,373 @@ ar_bla_agonist_p1.rf_cls_fit |>
  #truth = ar_bla_agonist_p1.2$target,
   #predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2),
   #predict(ar_bla_agonist_p1.rf_cls_fit, ar_bla_agonist_p1.2, type = "prob"))
-
-#I keep getting Error in predict.randomForest(object = object$fit, newdata = new_data) : New factor levels not present in the training data SAD 
+#roc_auc(ar_bla_agonist_p1.rf.pred, truth, .pred_0)
 
 #cross validation 
-#set.seed(1234)
-#ar_bla_agonist_p1.folds <- vfold_cv(ar_bla_agonist_p1.2, v=10)
-#ar_bla_agonist_p1.folds
+set.seed(1234)
+ar_bla_agonist_p1.folds <- vfold_cv(ar_bla_agonist_p1.3, v=5)
 
-#set.seed(1234)
-#ar_bla_agonist_p1.cv <-
-#  rf_workflow |>
-#  fit_resamples(ar_bla_agonist_p1.folds, 
-#                control = control_resamples(save_pred = TRUE)) #18 mins
+set.seed(1234)
+ar_bla_agonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_bla_agonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #4 mins
 
-#collect_metrics(ar_bla_agonist_p1.cv)
+collect_metrics(ar_bla_agonist_p1.cv)
 
-#ar_bla_agonist_p1.cv |>
-#  collect_predictions() |>
-#  roc_curve(target, .pred_0) |>
-#  autoplot()
 
-#_________________________________________________________________________________
+ar_bla_agonist_p1.roc <- ar_bla_agonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
 
-#ar_bla_antagonist_p1
+
+#Do you need to do both predictions and CV for each model? Blanca said no
+
+```
+
+Assay: ar_bla_antagonist_p1
+
+```{r}
 
 #making dataset include factors
 ar_bla_antagonist_p1.2 <- ar_bla_antagonist_p1 |>
   mutate(across(-1, as.factor)) |>
   mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_bla_antagonist_p1.2)
+
+ar_bla_antagonist_p1.3 <- ar_bla_antagonist_p1.2 |>
+  select(-X)
 
 #Making model
+set.seed(1234)
 ar_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_bla_antagonist_p1.2)
-ar_bla_antagonist_p1.rf_cls_fit
+  fit(target ~ ., data = ar_bla_antagonist_p1.3)
+
 
 #gini_importance score
 ar_bla_antagonist_p1.rf_cls_fit |> 
   extract_fit_engine() |>
   vip()
 
-#cross validation // not run yet bc wait time is longg
-#set.seed(1234)
-#ar_bla_antagonist_p1.folds <- vfold_cv(ar_bla_antagonist_p1.2, v=10)
-#ar_bla_antagonist_p1.folds
-
-#set.seed(1234)
-#ar_bla_antagonist_p1.cv <-
- # rf_workflow |>
-  #fit_resamples(ar_bla_antagonist_p1.folds, 
-  #              control = control_resamples(save_pred = TRUE)) 
-
-#collect_metrics(ar_bla_antagonist_p1.cv)
-
-#ar_bla_antagonist_p1.cv |>
- # collect_predictions() |>
-  #roc_curve(target, .pred_0) |>
-  #autoplot()
-
-#_________________________________________________________________________________
-
-#ar_mda_kb2_luc_agonist_p1
+#predictions 
+#ar_bla_antagonist_p1.rf.pred <- bind_cols(
+ #truth = ar_bla_antagonist_p1.2$target,
+  #predict(ar_bla_antagonist_p1.rf_cls_fit, ar_bla_antagonist_p1.2),
+  #predict(ar_bla_antagonist_p1.rf_cls_fit, ar_bla_antagonist_p1.2, type = "prob"))
+#roc_auc(ar_bla_antagonist_p1.rf.pred, truth, .pred_0)
 
 
+#cross validation 
+set.seed(1234)
+ar_bla_antagonist_p1.folds <- vfold_cv(ar_bla_antagonist_p1.3, v=5)
+
+set.seed(1234)
+ar_bla_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_bla_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #3 mins
+
+
+collect_metrics(ar_bla_antagonist_p1.cv)
+
+ar_bla_antagonist_p1.roc <- ar_bla_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+
+```
+
+Assay: ar_mda_kb2_luc_agonist_p1
+
+```{r}
 #making dataset include factors
 ar_mda_kb2_luc_agonist_p1.2 <- ar_mda_kb2_luc_agonist_p1 |>
   mutate(across(-1, as.factor)) |>
   mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_mda_kb2_luc_agonist_p1.2)
+ar_mda_kb2_luc_agonist_p1.3 <- ar_mda_kb2_luc_agonist_p1.2 |>
+  select(-X)
 
 #Making model
+set.seed(1234)
 ar_mda_kb2_luc_agonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p1.2)
-ar_mda_kb2_luc_agonist_p1.rf_cls_fit
+  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p1.3)
 
 #gini_importance score
 ar_mda_kb2_luc_agonist_p1.rf_cls_fit |> 
   extract_fit_engine() |>
   vip()
 
-#cross validation // not run yet bc wait time is longg
-#set.seed(1234)
-#ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.2, v=10)
-#ar_mda_kb2_luc_agonist_p1.folds
 
-#set.seed(1234)
-#ar_mda_kb2_luc_agonist_p1.cv <-
- # rf_workflow |>
-#  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
- #               control = control_resamples(save_pred = TRUE)) 
-
-#collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
-
-#ar_mda_kb2_luc_agonist_p1.cv |>
- # collect_predictions() |>
-#  roc_curve(target, .pred_0) |>
-#  autoplot()
-
-#________________________________________________________________________________
-
-#ar_mda_kb2_luc_agonist_p3
+#prediction
+#ar_mda_kb2_luc_agonist_p1.rf.pred <- bind_cols(
+ #truth = ar_mda_kb2_luc_agonist_p1.2$target,
+  #predict(ar_mda_kb2_luc_agonist_p1.rf_cls_fit, ar_mda_kb2_luc_agonist_p1.2),
+  #predict(ar_mda_kb2_luc_agonist_p1.rf_cls_fit, ar_mda_kb2_luc_agonist_p1.2, type = "prob"))
+#roc_auc(ar_mda_kb2_luc_agonist_p1.rf.pred, truth, .pred_0)
 
 
+#cross validation 
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1.3, v=5)
+
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_agonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #2 min 
+
+collect_metrics(ar_mda_kb2_luc_agonist_p1.cv)
+
+ar_mda_kb2_luc_agonist_p1.roc <- ar_mda_kb2_luc_agonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: ar_mda_kb2_luc_agonist_p3
+
+```{r}
 #making dataset include factors
 ar_mda_kb2_luc_agonist_p3.2 <- ar_mda_kb2_luc_agonist_p3 |>
   mutate(across(-1, as.factor)) |>
   mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_mda_kb2_luc_agonist_p3.2)
+ar_mda_kb2_luc_agonist_p3.3 <- ar_mda_kb2_luc_agonist_p3.2 |>
+  select(-X)
+
 
 #Making model
+set.seed(1234)
 ar_mda_kb2_luc_agonist_p3.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p3.2)
-ar_mda_kb2_luc_agonist_p3.rf_cls_fit
+  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p3.3)
+
 
 #gini_importance score
 ar_mda_kb2_luc_agonist_p3.rf_cls_fit |> 
   extract_fit_engine() |>
   vip()
 
-#cross validation // not run yet bc wait time is longg
-#set.seed(1234)
-#ar_mda_kb2_luc_agonist_p3.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p3.2, v=10)
+
+#prediction
+#ar_mda_kb2_luc_agonist_p3.rf.pred <- bind_cols(
+ #truth = ar_mda_kb2_luc_agonist_p3.2$target,
+  #predict(ar_mda_kb2_luc_agonist_p3.rf_cls_fit, ar_mda_kb2_luc_agonist_p3.2),
+  #predict(ar_mda_kb2_luc_agonist_p3.rf_cls_fit, ar_mda_kb2_luc_agonist_p3.2, type = "prob"))
+#roc_auc(ar_mda_kb2_luc_agonist_p3.rf.pred, truth, .pred_0)
+
+
+#cross validation 
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p3.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p3.3, v=5)
 #ar_mda_kb2_luc_agonist_p3.folds
 
-#set.seed(1234)
-#ar_mda_kb2_luc_agonist_p3.cv <-
-#  rf_workflow |>
-#  fit_resamples(ar_mda_kb2_luc_agonist_p3.folds, 
-#                control = control_resamples(save_pred = TRUE)) 
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p3.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_agonist_p3.folds, 
+                control = control_resamples(save_pred = TRUE)) 
 
-#collect_metrics(ar_mda_kb2_luc_agonist_p3.cv)
-
-#ar_mda_kb2_luc_agonist_p3.cv |>
-#  collect_predictions() |>
-#  roc_curve(target, .pred_0) |>
-#  autoplot()
-
-#________________________________________________________________________________
-
-#ar_mda_kb2_luc_antagonist_p1
+collect_metrics(ar_mda_kb2_luc_agonist_p3.cv)
 
 
+ar_mda_kb2_luc_agonist_p3.roc <- ar_mda_kb2_luc_agonist_p3.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: ar_mda_kb2_luc_antagonist_p1
+
+```{r}
 #making dataset include factors
 ar_mda_kb2_luc_antagonist_p1.2 <- ar_mda_kb2_luc_antagonist_p1 |>
   mutate(across(-1, as.factor)) |>
   mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_mda_kb2_luc_antagonist_p1.2)
+ar_mda_kb2_luc_antagonist_p1.3 <- ar_mda_kb2_luc_antagonist_p1.2 |>
+  select(-X)
 
 #Making model
+set.seed(1234)
 ar_mda_kb2_luc_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p1.2)
-ar_mda_kb2_luc_antagonist_p1.rf_cls_fit
+  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p1.3)
+
 
 #gini_importance score
 ar_mda_kb2_luc_antagonist_p1.rf_cls_fit |> 
   extract_fit_engine() |>
   vip()
 
-#cross validation // not run yet bc wait time is longg
-#set.seed(1234)
-#ar_mda_kb2_luc_antagonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p1.2, v=10)
+
+#prediction
+#ar_mda_kb2_luc_antagonist_p1.rf.pred <- bind_cols(
+ #truth = ar_mda_kb2_luc_antagonist_p1.2$target,
+  #predict(ar_mda_kb2_luc_antagonist_p1.rf_cls_fit, ar_mda_kb2_luc_antagonist_p1.2),
+  #predict(ar_mda_kb2_luc_antagonist_p1.rf_cls_fit, ar_mda_kb2_luc_antagonist_p1.2, type = "prob"))
+#roc_auc(ar_mda_kb2_luc_antagonist_p1.rf.pred, truth, .pred_0)
+
+
+#cross validation 
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p1.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p1.3, v=5)
 #ar_mda_kb2_luc_antagonist_p1.folds
 
-#set.seed(1234)
-#ar_mda_kb2_luc_antagonist_p1.cv <-
- # rf_workflow |>
-#  fit_resamples(ar_mda_kb2_luc_antagonist_p1.folds, 
- #               control = control_resamples(save_pred = TRUE)) 
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) 
 
-#collect_metrics(ar_mda_kb2_luc_antagonist_p1.cv)
+collect_metrics(ar_mda_kb2_luc_antagonist_p1.cv)
 
-#ar_mda_kb2_luc_antagonist_p1.cv |>
- # collect_predictions() |>
-  #roc_curve(target, .pred_0) |>
-  #autoplot()
+ar_mda_kb2_luc_antagonist_p1.roc <- ar_mda_kb2_luc_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
 
+Assay: ar_mda_kb2_luc_antagonist_p2
 
-#_______________________________________________________________________________
-
-#ar_mda_kb2_luc_antagonist_p2
-
+```{r}
 
 #making dataset include factors
 ar_mda_kb2_luc_antagonist_p2.2 <- ar_mda_kb2_luc_antagonist_p2 |>
   mutate(across(-1, as.factor)) |>
   mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-head(ar_mda_kb2_luc_antagonist_p2.2)
+ar_mda_kb2_luc_antagonist_p2.3 <- ar_mda_kb2_luc_antagonist_p2.2 |>
+  select(-X) 
 
 #Making model
+set.seed(1234)
 ar_mda_kb2_luc_antagonist_p2.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p2.2)
-ar_mda_kb2_luc_antagonist_p2.rf_cls_fit
+  fit(target ~ ., data = ar_mda_kb2_luc_antagonist_p2.3)
+
 
 #gini_importance score
 ar_mda_kb2_luc_antagonist_p2.rf_cls_fit |> 
   extract_fit_engine() |>
   vip()
 
-#cross validation // not run yet bc wait time is longg
-#set.seed(1234)
-#ar_mda_kb2_luc_antagonist_p2.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p2.2, v=10)
+
+#prediction
+#ar_mda_kb2_luc_antagonist_p2.rf.pred <- bind_cols(
+ #truth = ar_mda_kb2_luc_antagonist_p2.2$target,
+  #predict(ar_mda_kb2_luc_antagonist_p2.rf_cls_fit, ar_mda_kb2_luc_antagonist_p2.2),
+  #predict(ar_mda_kb2_luc_antagonist_p2.rf_cls_fit, ar_mda_kb2_luc_antagonist_p2.2, type = "prob"))
+#roc_auc(ar_mda_kb2_luc_antagonist_p2.rf.pred, truth, .pred_0)
+
+
+
+#cross validation
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p2.folds <- vfold_cv(ar_mda_kb2_luc_antagonist_p2.3, v=5)
 #ar_mda_kb2_luc_antagonist_p2.folds
 
-#set.seed(1234)
-#ar_mda_kb2_luc_antagonist_p2.cv <-
- # rf_workflow |>
-  #fit_resamples(ar_mda_kb2_luc_antagonist_p2.folds, 
-   #             control = control_resamples(save_pred = TRUE)) 
+set.seed(1234)
+ar_mda_kb2_luc_antagonist_p2.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_antagonist_p2.folds, 
+                control = control_resamples(save_pred = TRUE)) 
 
-#collect_metrics(ar_mda_kb2_luc_antagonist_p2.cv)
+collect_metrics(ar_mda_kb2_luc_antagonist_p2.cv)
 
-#ar_mda_kb2_luc_antagonist_p2.cv |>
-#  collect_predictions() |>
-#  roc_curve(target, .pred_0) |>
-#  autoplot()
+
+ar_mda_kb2_luc_antagonist_p2.roc <- ar_mda_kb2_luc_antagonist_p2.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
 ```
 
+AUC curves for Androgen based ML
+
+```{r}
+
+ggplot() + 
+  geom_path(data = ar_bla_agonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "green")) +
+  geom_path(data = ar_bla_antagonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
+  geom_path(data = ar_mda_kb2_luc_agonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "lightgreen")) +
+  geom_path(data = ar_mda_kb2_luc_agonist_p3.roc, aes (x=1 - specificity, y = sensitivity, color = "darkgreen")) +
+  geom_path(data = ar_mda_kb2_luc_antagonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "pink")) +
+  geom_path(data = ar_mda_kb2_luc_antagonist_p2.roc, aes (x=1 - specificity, y = sensitivity, color = "darkred")) +
+  
+  
+  labs(color = "Model (based on Tox21 assay)") +
+  scale_color_manual(values = (c("green","red","lightgreen","darkgreen","pink","darkred")), 
+                     labels = c("ar_bla_agonist_p1, accuracy: 0.9795108", "ar_bla_antagonist_p1, accuracy: 0.9346703", "ar_mda_kb2_luc_agonist_p1, accuracy: 0.9807095", "ar_mda_kb2_luc_agonist_p3, accuracy: 0.9852045", "ar_mda_kb2_luc_antagonist_p1, accuracy: 0.9467155", "ar_mda_kb2_luc_antagonist_p2, accuracy: 0.8871589")) +
+  geom_abline(lty=3) +
+  coord_equal() +
+  theme_bw() +
+  ggtitle("AUC of ML models of Androgen Receptor Toxicity")
+
+```
+
+Comparing top chemotypes
+
+Androgen receptor agonist
+
+```{r}
+#agonist: ar_bla_agonist_p1, ar_mda_kb2_luc_agonist_p1, ar_mda_kb2_luc_agonist_p3
+
+agonist1_important <- ar_bla_agonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+agonist1_top <-agonist1_important |>
+  filter(MeanDecreaseGini > 10)
+
+agonist2_important <- ar_mda_kb2_luc_agonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+agonist2_top <-agonist2_important |>
+  filter(MeanDecreaseGini > 10)
+
+
+agonist3_important <- ar_mda_kb2_luc_agonist_p3.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+agonist3_top <-agonist3_important |>
+  filter(MeanDecreaseGini > 10)
+
+#add together? idk
+
+```
+
+Androgen Receptor antagonist
+
+```{r}
+#antagonist: ar_bla_antagonist_p1, ar_mda_kb2_luc_antagonist_p1, ar_mda_kb2_luc_antagonist_p2
+
+antagonist1_important <- ar_bla_antagonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+antagonist1_top <-antagonist1_important |>
+  filter(MeanDecreaseGini > 10)
+
+antagonist2_important <- ar_mda_kb2_luc_antagonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+antagonist2_top <-antagonist2_important |>
+  filter(MeanDecreaseGini > 10)
+
+
+antagonist3_important <- ar_mda_kb2_luc_antagonist_p2.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+antagonist3_top <-antagonist3_important |>
+  filter(MeanDecreaseGini > 10)
+
+```
+
+\
 Estrogen Receptor based assays
 
 ```{r}
