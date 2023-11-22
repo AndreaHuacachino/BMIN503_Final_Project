@@ -1,19 +1,8 @@
 # BMIN503/EPID600 Final Project
 
-This repository contains templates for your final written report and GitHub repository. Follow the instructions below to clone this repository, and then turn in your final project's code via a pull request to this repository.
+Per- and polyfluoroalkyl substances (PFAS) are a class of chemicals that pollute our environment. They are ubiquitous, and nearly in 99% of all humans on earth. Unfortunately, some members have been associated to various health outcomes, including reproductive health. Using supervised machine learning, the objective of the project is to predict the reproductive toxicity of PFAS members by characterizing their chemotypes and relating them to known biological outcomes. The data for the project was obtained from Tox 21 and  CompToxAI. Dr. Joseph Romano assisted with obtaining the data while Dr. Trevor Penning assisted by redefining the assays chosen as the biological endpoint. The project hopes to help provide more information on the toxicology of unknown PFAS as well as communicate the properties that lead to that toxicity.
 
-1. To start, **fork** this BMIN503_Final_Project repository.
-1. **Clone** the forked repository to your computer.
-1. Modify the files provided, add your own, and **commit** changes to complete your final project.
-1. **Push**/sync the changes up to your GitHub account.
-1. Create a **pull request** on this, the original BMIN503_Final_Project, repository to turn in your final project.
+All data is publicly available on my github repository, TOX21, and CompToxAI.
 
 
-Follow the instructions [here][forking] if you are unsure what the above steps mean.
-
-DUE DATE FOR FINAL VERSION: 12/13/23 11:59PM. This is a hard deadline. Turn in whatever you have by this date.
-
-
-<!-- Links -->
-[forking]: https://guides.github.com/activities/forking/
 
