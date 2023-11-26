@@ -474,7 +474,8 @@ agonist1_important <- ar_bla_agonist_p1.rf_cls_fit |>
 
 #To see what the threshold of signficant should be 
 agonist1_log<- log(agonist1_important$MeanDecreaseGini)
-hist(agonist1_log, 25)  
+hist(agonist1_log, 25, main = "ar_bla_agonist_p1 model", xlab = "log (mean decrease gini)")  
+
 agonist_1std <- sd(agonist1_log[is.finite(agonist1_log)], na.rm=TRUE)
 agonist_1mean <- mean(agonist1_log[is.finite(agonist1_log)], na.rm=TRUE)
 agonist_1threshold <- exp(agonist_1mean+agonist_1std)
@@ -484,10 +485,7 @@ agonist1_top <-agonist1_important |>
   filter(MeanDecreaseGini > agonist_1threshold)
 
 
-
-
-
-
+#__________________________________________________________________________________
 
 
 agonist2_important <- ar_mda_kb2_luc_agonist_p1.rf_cls_fit |>
@@ -499,7 +497,7 @@ agonist2_important <- ar_mda_kb2_luc_agonist_p1.rf_cls_fit |>
 
 #To see what the threshold of signficant should be 
 agonist2_log<- log(agonist2_important$MeanDecreaseGini)
-hist(agonist2_log, 25)  
+hist(agonist2_log, 25, main = "ar_mda_kb2_luc_agonist_p1 model", xlab = "log (mean decrease gini)")  
 agonist_2std <- sd(agonist2_log[is.finite(agonist2_log)], na.rm=TRUE)
 agonist_2mean <- mean(agonist2_log[is.finite(agonist2_log)], na.rm=TRUE)
 agonist_2threshold <- exp(agonist_2mean+agonist_2std)
@@ -509,10 +507,7 @@ agonist2_top <-agonist2_important |>
   filter(MeanDecreaseGini > agonist_2threshold)
 
 
-
-
-
-
+#__________________________________________________________________________________
 
 
 agonist3_important <- ar_mda_kb2_luc_agonist_p3.rf_cls_fit |>
@@ -524,7 +519,7 @@ agonist3_important <- ar_mda_kb2_luc_agonist_p3.rf_cls_fit |>
 
 #To see what the threshold of signficant should be 
 agonist3_log<- log(agonist3_important$MeanDecreaseGini)
-hist(agonist3_log, 25)  
+hist(agonist3_log, 25, main = "ar_mda_kb2_luc_agonist_p3 model", xlab = "log (mean decrease gini)")    
 agonist_3std <- sd(agonist3_log[is.finite(agonist3_log)], na.rm=TRUE)
 agonist_3mean <- mean(agonist3_log[is.finite(agonist3_log)], na.rm=TRUE)
 agonist_3threshold <- exp(agonist_2mean+agonist_3std)
@@ -532,6 +527,9 @@ agonist_3threshold <- exp(agonist_2mean+agonist_3std)
 #values above 1 std 
 agonist3_top <-agonist3_important |>
   filter(MeanDecreaseGini > agonist_3threshold)
+
+
+#__________________________________________________________________________________
 
 
 #same values
@@ -544,9 +542,15 @@ AR_A2A3_values <- intersect(agonist2_top$chemotype, agonist3_top$chemotype)
 AR_agonist_common <- intersect(intersect(agonist1_top$chemotype, agonist2_top$chemotype), agonist3_top$chemotype)
 print(AR_agonist_common)
 
+
+#at the end check what variables correlate to toxicity to see toxic ones. 
+
+```
+
+```{r eval = FALSE}
 #venn diagram
   #making intersects lists
-AR_agonist_allthree <- c(AR_agonist_common)
+AR_agonist_allthree <AR- c(AR_agonist_common)
 AR_A1A2_names <- c(AR_A1A2_values)
 AR_A1A3_names <- c(AR_A1A3_values)
 AR_A2A3_names <- c(AR_A2A3_values)
@@ -559,7 +563,7 @@ agonist3_top_listforvenndiagram <- c(agonist3_top$chemotypes)
 
 
   #making Venndiagram object
-AR_agonist_venndiagram <- venn.diagram(list(agonist1_top_listforvenndiagram=agonist1_top_listforvenndiagram, agonist2_top_listforvenndiagram=agonist2_top_listforvenndiagram, agonist3_top_listforvenndiagram=agonist3_top_listforvenndiagram),
+AR_agonist_venndiagram <- venn.diagram(list(ar_bla_agonist_p1=agonist1_top_listforvenndiagram, ar_mda_kb2_luc_agonist_p1=agonist2_top_listforvenndiagram, ar_mda_kb2_luc_agonist_p3=agonist3_top_listforvenndiagram),
                   fill = c("orange", "blue", "pink"),
                   filename=NULL)
 
@@ -567,12 +571,6 @@ AR_agonist_venndiagram <- venn.diagram(list(agonist1_top_listforvenndiagram=agon
 grid.newpage()
 grid.draw(AR_agonist_venndiagram) 
 #wow that was v ugly, maybe I'll just make a summary table?
-
-
-
-
-#at the end check what variables correlate to toxicity to see toxic ones. 
-
 ```
 
 Androgen Receptor antagonist
@@ -580,35 +578,88 @@ Androgen Receptor antagonist
 ```{r}
 #antagonist: ar_bla_antagonist_p1, ar_mda_kb2_luc_antagonist_p1, ar_mda_kb2_luc_antagonist_p2
 
+#geting meandecreasegini
 antagonist1_important <- ar_bla_antagonist_p1.rf_cls_fit |>
   extract_fit_engine() |>
   importance () |>
   as.data.frame() |>
   rownames_to_column("chemotypes") |>
   arrange(desc(MeanDecreaseGini))
-antagonist1_top <-antagonist1_important |>
-  filter(MeanDecreaseGini > 10)
 
+#To see what the threshold of signficant should be 
+antagonist1_log<- log(antagonist1_important$MeanDecreaseGini)
+hist(antagonist1_log, 25, main = "ar_bla_antagonist_p1 model", xlab =" log (mean decrease gini)")  
+antagonist_1std <- sd(antagonist1_log[is.finite(antagonist1_log)], na.rm=TRUE)
+antagonist_1mean <- mean(antagonist1_log[is.finite(antagonist1_log)], na.rm=TRUE)
+antagonist_1threshold <- exp(antagonist_1mean+antagonist_1std)
+
+#values above 1 std 
+antagonist1_top <-antagonist1_important |>
+  filter(MeanDecreaseGini > antagonist_1threshold)
+
+
+
+#_________________________________________________________________________________
+
+#geting meandecreasegini
 antagonist2_important <- ar_mda_kb2_luc_antagonist_p1.rf_cls_fit |>
   extract_fit_engine() |>
   importance () |>
   as.data.frame() |>
   rownames_to_column("chemotypes") |>
   arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+antagonist2_log<- log(antagonist2_important$MeanDecreaseGini)
+hist(antagonist2_log, 25,  main = "ar_mda_kb2_luc_antagonist_p1 model", xlab =" log (mean decrease gini)")  
+antagonist_2std <- sd(antagonist2_log[is.finite(antagonist2_log)], na.rm=TRUE)
+antagonist_2mean <- mean(antagonist2_log[is.finite(antagonist2_log)], na.rm=TRUE)
+antagonist_2threshold <- exp(antagonist_2mean+antagonist_2std)
+
+#values above std 
 antagonist2_top <-antagonist2_important |>
-  filter(MeanDecreaseGini > 10)
+  filter(MeanDecreaseGini > antagonist_2threshold)
 
 
+
+#__________________________________________________________________________________
+
+#geting meandecreasegini
 antagonist3_important <- ar_mda_kb2_luc_antagonist_p2.rf_cls_fit |>
   extract_fit_engine() |>
   importance () |>
   as.data.frame() |>
   rownames_to_column("chemotypes") |>
   arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+antagonist3_log<- log(antagonist3_important$MeanDecreaseGini)
+hist(antagonist3_log, 25, main = "ar_mda_kb2_luc_antagonist_p2 model", xlab =" log (mean decrease gini)")  
+antagonist_3std <- sd(antagonist3_log[is.finite(antagonist3_log)], na.rm=TRUE)
+antagonist_3mean <- mean(antagonist3_log[is.finite(antagonist3_log)], na.rm=TRUE)
+antagonist_3threshold <- exp(antagonist_3mean+antagonist_3std)
+
+#values above std 
 antagonist3_top <-antagonist3_important |>
-  filter(MeanDecreaseGini > 10)
+  filter(MeanDecreaseGini > antagonist_3threshold)
+
+#_________________________________________________________________________________
+
+
+
+#same values
+  #pairwise
+AR_An1An2_values <- intersect(antagonist1_top$chemotype, antagonist2_top$chemotype)
+AR_An1An3_values <- intersect(antagonist1_top$chemotype, antagonist3_top$chemotype)
+AR_An2An3_values <- intersect(antagonist2_top$chemotype, antagonist3_top$chemotype)
+
+  #all three assays
+AR_antagonist_common <- intersect(intersect(antagonist1_top$chemotype, antagonist2_top$chemotype), antagonist3_top$chemotype)
+print(AR_antagonist_common)
 
 ```
+
+No common chemotype makes them AR antagonist in all assays
 
 \
 Estrogen Receptor based assays
