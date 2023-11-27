@@ -457,12 +457,274 @@ ggplot() +
 
 ```
 
-Comparing top chemotypes
+Estrogen Receptor based assays
 
-Androgen receptor agonist
+Assay: er_bla_agonist_p2
 
 ```{r}
-#agonist: ar_bla_agonist_p1, ar_mda_kb2_luc_agonist_p1, ar_mda_kb2_luc_agonist_p3
+#making dataset include factors
+er_bla_agonist_p2.2 <- er_bla_agonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+er_bla_agonist_p2.3 <- er_bla_agonist_p2.2 |> #to get rid of ID
+  select(-X)
+
+#Making model 
+set.seed(1234)
+er_bla_agonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_bla_agonist_p2.3)
+
+#gini_importance score
+er_bla_agonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+er_bla_agonist_p2.folds <- vfold_cv(er_bla_agonist_p2.3, v=5)
+
+set.seed(1234)
+er_bla_agonist_p2.cv <-
+  rf_workflow |>
+  fit_resamples(er_bla_agonist_p2.folds, 
+                control = control_resamples(save_pred = TRUE)) #3 mins
+
+collect_metrics(er_bla_agonist_p2.cv)
+#accuracy: 0.9588106
+
+er_bla_agonist_p2.roc <- er_bla_agonist_p2.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+
+
+```
+
+Assay: er_bla_antagonist_p1
+
+```{r}
+#making dataset include factors
+ er_bla_antagonist_p1.2 <-  er_bla_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+ er_bla_antagonist_p1.3 <-  er_bla_antagonist_p1.2 |> #to get rid of ID
+  select(-X)
+
+#Making model 
+set.seed(1234)
+ er_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_bla_antagonist_p1.3)
+
+#gini_importance score
+ er_bla_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+ er_bla_antagonist_p1.folds <- vfold_cv( er_bla_antagonist_p1.3, v=5)
+
+set.seed(1234)
+ er_bla_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples( er_bla_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #2 mins
+
+collect_metrics( er_bla_antagonist_p1.cv)
+#accuracy: 0.9499103
+
+er_bla_antagonist_p1.roc <-  er_bla_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: er_luc_bg1_4e2_agonist_p2
+
+```{r}
+#making dataset include factors
+ er_luc_bg1_4e2_agonist_p2.2 <-  er_luc_bg1_4e2_agonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+ er_luc_bg1_4e2_agonist_p2.3 <-  er_luc_bg1_4e2_agonist_p2.2 |> #to get rid of ID
+  select(-X)
+
+#Making model 
+set.seed(1234)
+ er_luc_bg1_4e2_agonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p2.3)
+ 
+#gini_importance score
+er_luc_bg1_4e2_agonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+er_luc_bg1_4e2_agonist_p2.folds <- vfold_cv(er_luc_bg1_4e2_agonist_p2.3, v=5)
+
+set.seed(1234)
+ er_luc_bg1_4e2_agonist_p2.cv <-
+  rf_workflow |>
+  fit_resamples(er_luc_bg1_4e2_agonist_p2.folds, 
+                control = control_resamples(save_pred = TRUE)) #2 mins
+
+collect_metrics(er_luc_bg1_4e2_agonist_p2.cv)
+#accuracy: 0.9079745
+
+er_luc_bg1_4e2_agonist_p2.roc <-  er_luc_bg1_4e2_agonist_p2.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: er_luc_bg1_4e2_agonist_p4
+
+```{r}
+#making dataset include factors
+er_luc_bg1_4e2_agonist_p4.2 <-  er_luc_bg1_4e2_agonist_p4 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+er_luc_bg1_4e2_agonist_p4.3 <-  er_luc_bg1_4e2_agonist_p4.2 |> #to get rid of ID
+  select(-X)
+
+#Making model 
+set.seed(1234)
+ er_luc_bg1_4e2_agonist_p4.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p4.3)
+ 
+#gini_importance score
+er_luc_bg1_4e2_agonist_p4.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+er_luc_bg1_4e2_agonist_p4.folds <- vfold_cv(er_luc_bg1_4e2_agonist_p4.3, v=5)
+
+set.seed(1234)
+er_luc_bg1_4e2_agonist_p4.cv <-
+  rf_workflow |>
+  fit_resamples(er_luc_bg1_4e2_agonist_p4.folds, 
+                control = control_resamples(save_pred = TRUE)) #2 mins
+
+collect_metrics(er_luc_bg1_4e2_agonist_p4.cv)
+#accuracy: 0.9878664
+
+er_luc_bg1_4e2_agonist_p4.roc <- er_luc_bg1_4e2_agonist_p4.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: er_luc_bg1_4e2_antagonist_p1
+
+```{r}
+#making dataset include factors
+er_luc_bg1_4e2_antagonist_p1.2 <- er_luc_bg1_4e2_antagonist_p1 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+er_luc_bg1_4e2_antagonist_p1.3 <- er_luc_bg1_4e2_antagonist_p1.2 |> 
+  select(-X) 
+
+#Making model 
+set.seed(1234)
+ er_luc_bg1_4e2_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p1.3)
+ 
+#gini_importance score
+er_luc_bg1_4e2_antagonist_p1.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p1.folds <- vfold_cv(er_luc_bg1_4e2_antagonist_p1.3, v=5)
+
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p1.cv <-
+  rf_workflow |>
+  fit_resamples(er_luc_bg1_4e2_antagonist_p1.folds, 
+                control = control_resamples(save_pred = TRUE)) #2 mins
+
+collect_metrics(er_luc_bg1_4e2_antagonist_p1.cv)
+#accuracy: 0.9517049
+
+er_luc_bg1_4e2_antagonist_p1.roc <- er_luc_bg1_4e2_antagonist_p1.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+Assay: er_luc_bg1_4e2_antagonist_p2
+
+```{r}
+#making dataset include factors
+er_luc_bg1_4e2_antagonist_p2.2 <- er_luc_bg1_4e2_antagonist_p2 |>
+  mutate(across(-1, as.factor)) |>
+  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1"))) #for id
+
+er_luc_bg1_4e2_antagonist_p2.3 <- er_luc_bg1_4e2_antagonist_p2.2 |> 
+  select(-X) 
+
+#Making model 
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p2.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p2.3)
+ 
+#gini_importance score
+er_luc_bg1_4e2_antagonist_p2.rf_cls_fit |> 
+  extract_fit_engine() |>
+  vip()
+
+#cross validation 
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p2.folds <- vfold_cv(er_luc_bg1_4e2_antagonist_p2.3, v=5)
+
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p2.cv <-
+  rf_workflow |>
+  fit_resamples(er_luc_bg1_4e2_antagonist_p2.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(er_luc_bg1_4e2_antagonist_p2.cv)
+#accuracy: 0.9389092
+
+er_luc_bg1_4e2_antagonist_p2.roc <- er_luc_bg1_4e2_antagonist_p2.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+```
+
+AUC curves for Androgen based ML
+
+```{r}
+
+ggplot() + 
+  geom_path(data = er_bla_agonist_p2.roc, aes (x=1 - specificity, y = sensitivity, color = "green")) +
+  geom_path(data = er_bla_antagonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
+  geom_path(data = er_luc_bg1_4e2_agonist_p2.roc, aes (x=1 - specificity, y = sensitivity, color = "lightgreen")) +
+  geom_path(data = er_luc_bg1_4e2_agonist_p4.roc, aes (x=1 - specificity, y = sensitivity, color = "darkgreen")) +
+  geom_path(data = er_luc_bg1_4e2_antagonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "pink")) +
+  geom_path(data = er_luc_bg1_4e2_antagonist_p2.roc, aes (x=1 - specificity, y = sensitivity, color = "darkred")) +
+  
+  
+  labs(color = "Model (based on Tox21 assay)") +
+  scale_color_manual(values = (c("green","red","lightgreen","darkgreen","pink","darkred")), 
+                     labels = c("er_bla_agonist_p2, accuracy: 0.9588106", "er_bla_antagonist_p1, accuracy: 0.9499103", "er_luc_bg1_4e2_agonist_p2, accuracy: 0.9079745", "er_luc_bg1_4e2_agonist_p4, accuracy: 0.9878664", "er_luc_bg1_4e2_antagonist_p1, accuracy: 0.9517049", "er_luc_bg1_4e2_antagonist_p2, accuracy: 0.9389092")) +
+  geom_abline(lty=3) +
+  coord_equal() +
+  theme_bw() +
+  ggtitle("AUC of ML models of Estrogen Receptor Toxicity")
+```
+
+### Results
+
+Comparing top chemotypes
+
+Androgen Receptor agonist
+
+```{r}
+#AR agonist assays: ar_bla_agonist_p1, ar_mda_kb2_luc_agonist_p1, ar_mda_kb2_luc_agonist_p3
 
 #geting meandecreasegini
 agonist1_important <- ar_bla_agonist_p1.rf_cls_fit |>
@@ -519,10 +781,10 @@ agonist3_important <- ar_mda_kb2_luc_agonist_p3.rf_cls_fit |>
 
 #To see what the threshold of signficant should be 
 agonist3_log<- log(agonist3_important$MeanDecreaseGini)
-hist(agonist3_log, 25, main = "ar_mda_kb2_luc_agonist_p3 model", xlab = "log (mean decrease gini)")    
+hist(agonist3_log, 25, main = "ar_mda_kb2_luc_agonist_p3 model", xlab = "log (mean decrease gini)") 
 agonist_3std <- sd(agonist3_log[is.finite(agonist3_log)], na.rm=TRUE)
 agonist_3mean <- mean(agonist3_log[is.finite(agonist3_log)], na.rm=TRUE)
-agonist_3threshold <- exp(agonist_2mean+agonist_3std)
+agonist_3threshold <- exp(agonist_3mean+agonist_3std)
 
 #values above 1 std 
 agonist3_top <-agonist3_important |>
@@ -547,10 +809,10 @@ print(AR_agonist_common)
 
 ```
 
-```{r eval = FALSE}
+```{r}
 #venn diagram
   #making intersects lists
-AR_agonist_allthree <AR- c(AR_agonist_common)
+AR_agonist_allthree <- c(AR_agonist_common)
 AR_A1A2_names <- c(AR_A1A2_values)
 AR_A1A3_names <- c(AR_A1A3_values)
 AR_A2A3_names <- c(AR_A2A3_values)
@@ -570,13 +832,65 @@ AR_agonist_venndiagram <- venn.diagram(list(ar_bla_agonist_p1=agonist1_top_listf
 
 grid.newpage()
 grid.draw(AR_agonist_venndiagram) 
-#wow that was v ugly, maybe I'll just make a summary table?
+
+```
+
+Validation of most important AR agonist chemotypes using ar_mda_kb2_luc_agonist_p1 since it has the most observations
+
+```{r}
+#cut files to have only certain column
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.2 <- ar_mda_kb2_luc_agonist_p1.2 |>
+  select(X, C..C..A..A, CC.C..C.A, A.A..A..A, X5.M.ring, C.C.C.C, C.C, C.C.A.A, X6M.ring...1,target)
+
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.3 <- ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.2 |>
+  select(-X)
+
+#make model
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.3)
+
+#cross validation 
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.folds <- vfold_cv(ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.3, v=5)
+
+set.seed(1234)
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.cv <-
+  rf_workflow |>
+  fit_resamples(ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.cv)
+#accuracy: 0.9760793
+
+
+#auc 
+ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.roc <- ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+
+
+#Graph to compare old to new
+ggplot() + 
+  geom_path(data = ar_mda_kb2_luc_agonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "blue")) +
+  geom_path(data = ar_mda_kb2_luc_agonist_p1_onlyimportantcolumns.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
+
+  
+  
+  labs(color = "Model") +
+  scale_color_manual(values = (c("blue","red")), 
+                     labels = c("Full model (all chemotypes), accuracy: 0.9807095", "New model (only top chemotypes), accuracy: 0.9760793")) +
+  geom_abline(lty=3) +
+  coord_equal() +
+  theme_bw() +
+  ggtitle("Comparison of ar_mda_kb2_luc_agonist_p1 models")
+
 ```
 
 Androgen Receptor antagonist
 
 ```{r}
-#antagonist: ar_bla_antagonist_p1, ar_mda_kb2_luc_antagonist_p1, ar_mda_kb2_luc_antagonist_p2
+#AR antagonist assays: ar_bla_antagonist_p1, ar_mda_kb2_luc_antagonist_p1, ar_mda_kb2_luc_antagonist_p2
 
 #geting meandecreasegini
 antagonist1_important <- ar_bla_antagonist_p1.rf_cls_fit |>
@@ -659,139 +973,348 @@ print(AR_antagonist_common)
 
 ```
 
-No common chemotype makes them AR antagonist in all assays
+No common chemotype makes them AR antagonist in all assays analyzed
 
-\
-Estrogen Receptor based assays
+Estrogen Receptor agonist
 
-```{r eval=FALSE}
-##Needs Update after I figure out everything I want to do first with AR##
+```{r}
+#ER agonist assays: er_bla_agonist_p2, er_luc_bg1_4e2_agonist_p2, er_luc_bg1_4e2_agonist_p4
 
-
-
-
-#er_bla_agonist_p2
-
-#making dataset include factors
-er_bla_agonist_p2.2 <- er_bla_agonist_p2 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-
-#Making model
-er_bla_agonist_p2.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_bla_agonist_p2.2)
-er_bla_agonist_p2.rf_cls_fit
-
-#gini_importance score
-er_bla_agonist_p2.rf_cls_fit |> 
+#geting meandecreasegini
+Eagonist1_important <- er_bla_agonist_p2.rf_cls_fit |>
   extract_fit_engine() |>
-  vip()
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eagonist1_log<- log(Eagonist1_important$MeanDecreaseGini)
+hist(Eagonist1_log, 25, main = "er_bla_agonist_p2 model", xlab =" log (mean decrease gini)")  
+Eagonist_1std <- sd(Eagonist1_log[is.finite(Eagonist1_log)], na.rm=TRUE)
+Eagonist_1mean <- mean(Eagonist1_log[is.finite(Eagonist1_log)], na.rm=TRUE)
+Eagonist_1threshold <- exp(Eagonist_1mean+Eagonist_1std)
+
+#values above 1 std 
+Eagonist1_top <-Eagonist1_important |>
+  filter(MeanDecreaseGini > Eagonist_1threshold)
 
 
-#_______________________________________________________________________________
-#er_bla_antagonist_p1
 
-#making dataset include factors
-er_bla_antagonist_p1.2 <- er_bla_antagonist_p1 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+#_________________________________________________________________________________
 
-#Making model 
-er_bla_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_bla_antagonist_p1.2)
-er_bla_antagonist_p1.rf_cls_fit
-
-#gini_importance score
-er_bla_antagonist_p1.rf_cls_fit |> 
+#geting meandecreasegini
+Eagonist2_important <- er_luc_bg1_4e2_agonist_p2.rf_cls_fit |>
   extract_fit_engine() |>
-  vip()
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eagonist2_log<- log(Eagonist2_important$MeanDecreaseGini)
+hist(Eagonist2_log, 25,  main = "er_luc_bg1_4e2_agonist_p2 model", xlab =" log (mean decrease gini)")  
+Eagonist_2std <- sd(Eagonist2_log[is.finite(Eagonist2_log)], na.rm=TRUE)
+Eagonist_2mean <- mean(Eagonist2_log[is.finite(Eagonist2_log)], na.rm=TRUE)
+Eagonist_2threshold <- exp(Eagonist_2mean+Eagonist_2std)
+
+#values above std 
+Eagonist2_top <-Eagonist2_important |>
+  filter(MeanDecreaseGini > Eagonist_2threshold)
 
 
-#_______________________________________________________________________________
-#er_luc_bg1_4e2_agonist_p2
 
-#making dataset include factors
-er_luc_bg1_4e2_agonist_p2.2 <- er_luc_bg1_4e2_agonist_p2 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
+#__________________________________________________________________________________
 
-#Making model
-er_luc_bg1_4e2_agonist_p2.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p2.2)
-er_luc_bg1_4e2_agonist_p2.rf_cls_fit
-
-#gini_importance score
-er_luc_bg1_4e2_agonist_p2.rf_cls_fit |> 
+#geting meandecreasegini
+Eagonist3_important <- er_luc_bg1_4e2_agonist_p4.rf_cls_fit |>
   extract_fit_engine() |>
-  vip()
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eagonist3_log<- log(Eagonist3_important$MeanDecreaseGini)
+hist(Eagonist3_log, 25, main = "er_luc_bg1_4e2_agonist_p4 model", xlab =" log (mean decrease gini)")  
+Eagonist_3std <- sd(Eagonist3_log[is.finite(Eagonist3_log)], na.rm=TRUE)
+Eagonist_3mean <- mean(Eagonist3_log[is.finite(Eagonist3_log)], na.rm=TRUE)
+Eagonist_3threshold <- exp(Eagonist_3mean+Eagonist_3std)
+
+#values above std 
+Eagonist3_top <-Eagonist3_important |>
+  filter(MeanDecreaseGini > Eagonist_3threshold)
+
+#_________________________________________________________________________________
 
 
 
-#_______________________________________________________________________________
+#same values
+  #pairwise
+ER_A1A2_values <- intersect(Eagonist1_top$chemotype, Eagonist2_top$chemotype)
+ER_A1A3_values <- intersect(Eagonist1_top$chemotype, Eagonist3_top$chemotype)
+ER_A2A3_values <- intersect(Eagonist2_top$chemotype, Eagonist3_top$chemotype)
 
-#er_luc_bg1_4e2_agonist_p4
-
-
-#making dataset include factors
-er_luc_bg1_4e2_agonist_p4.2 <- er_luc_bg1_4e2_agonist_p4 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-
-#Making model
-er_luc_bg1_4e2_agonist_p4.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_luc_bg1_4e2_agonist_p4.2)
-er_luc_bg1_4e2_agonist_p4.rf_cls_fit
-
-#gini_importance score
-er_luc_bg1_4e2_agonist_p4.rf_cls_fit |> 
-  extract_fit_engine() |>
-  vip()
+  #all three assays
+ER_agonist_common <- intersect(intersect(Eagonist1_top$chemotype, Eagonist2_top$chemotype), Eagonist3_top$chemotype)
+print(ER_agonist_common)
 
 
-#_______________________________________________________________________________
-
-#er_luc_bg1_4e2_antagonist_p1 
-
-
-#making dataset include factors
-er_luc_bg1_4e2_antagonist_p1.2 <- er_luc_bg1_4e2_antagonist_p1 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-
-#Making model
-er_luc_bg1_4e2_antagonist_p1.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p1.2)
-er_luc_bg1_4e2_antagonist_p1.rf_cls_fit
-
-#gini_importance score
-er_luc_bg1_4e2_antagonist_p1.rf_cls_fit |> 
-  extract_fit_engine() |>
-  vip()
-
-
-#_______________________________________________________________________________
-
-#er_luc_bg1_4e2_antagonist_p2
-
-
-#making dataset include factors
-er_luc_bg1_4e2_antagonist_p2.2 <- er_luc_bg1_4e2_antagonist_p2 |>
-  mutate(across(-1, as.factor)) |>
-  mutate(target = factor(target, levels = c(0, 1), labels = c("0", "1")))
-
-#Making model
-er_luc_bg1_4e2_antagonist_p2.rf_cls_fit <- rf_cls_spec |>
-  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p2.2)
-er_luc_bg1_4e2_antagonist_p2.rf_cls_fit
-
-#gini_importance score
-er_luc_bg1_4e2_antagonist_p2.rf_cls_fit |> 
-  extract_fit_engine() |>
-  vip()
 ```
 
-### Results
+```{r}
+#venn diagram
+  #making intersects lists
+ER_agonist_allthree <- c(ER_agonist_common)
+ER_A1A2_names <- c(ER_A1A2_values)
+ER_A1A3_names <- c(ER_A1A3_values)
+ER_A2A3_names <- c(ER_A2A3_values)
 
-Describe your results and include relevant tables, plots, and code/comments used to obtain them. End with a brief conclusion of your findings related to the question you set out to address. You can include references if you'd like, but this is not required.
+  #making files lists
+Eagonist1_top_listforvenndiagram <- c(Eagonist1_top$chemotypes)
+Eagonist2_top_listforvenndiagram <- c(Eagonist2_top$chemotypes)
+Eagonist3_top_listforvenndiagram <- c(Eagonist3_top$chemotypes)
+
+
+  #making Venndiagram object
+ER_agonist_venndiagram <- venn.diagram(list(er_bla_agonist_p2=Eagonist1_top_listforvenndiagram, er_luc_bg1_4e2_agonist_p2=Eagonist2_top_listforvenndiagram, er_luc_bg1_4e2_agonist_p4=Eagonist3_top_listforvenndiagram),
+                  fill = c("orange", "blue", "pink"),
+                  filename=NULL)
+
+
+grid.newpage()
+grid.draw(ER_agonist_venndiagram) 
+
+
+```
+
+Estrogen Receptor antagonist
+
+```{r}
+#ER antagonist assays: er_bla_antagonist_p1, er_luc_bg1_4e2_antagonist_p1, er_luc_bg1_4e2_antagonist_p2
+
+#geting meandecreasegini
+Eantagonist1_important <- er_bla_antagonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eantagonist1_log<- log(Eantagonist1_important$MeanDecreaseGini)
+hist(Eantagonist1_log, 25, main = "er_bla_antagonist_p1 model", xlab = "log (mean decrease gini)")  
+
+Eantagonist_1std <- sd(Eantagonist1_log[is.finite(Eantagonist1_log)], na.rm=TRUE)
+Eantagonist_1mean <- mean(Eantagonist1_log[is.finite(Eantagonist1_log)], na.rm=TRUE)
+Eantagonist_1threshold <- exp(Eantagonist_1mean+Eantagonist_1std)
+
+#values above 1 std 
+Eantagonist1_top <-Eantagonist1_important |>
+  filter(MeanDecreaseGini > Eantagonist_1threshold)
+
+
+#__________________________________________________________________________________
+
+
+Eantagonist2_important <- er_luc_bg1_4e2_antagonist_p1.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eantagonist2_log<- log(Eantagonist2_important$MeanDecreaseGini)
+hist(Eantagonist2_log, 25, main = "er_luc_bg1_4e2_antagonist_p1 model", xlab = "log (mean decrease gini)")  
+Eantagonist_2std <- sd(Eantagonist2_log[is.finite(Eantagonist2_log)], na.rm=TRUE)
+Eantagonist_2mean <- mean(Eantagonist2_log[is.finite(Eantagonist2_log)], na.rm=TRUE)
+Eantagonist_2threshold <- exp(Eantagonist_2mean+Eantagonist_2std)
+
+#values above 1 std 
+Eantagonist2_top <-Eantagonist2_important |>
+  filter(MeanDecreaseGini > Eantagonist_2threshold)
+
+
+#__________________________________________________________________________________
+
+
+Eantagonist3_important <- er_luc_bg1_4e2_antagonist_p2.rf_cls_fit |>
+  extract_fit_engine() |>
+  importance () |>
+  as.data.frame() |>
+  rownames_to_column("chemotypes") |>
+  arrange(desc(MeanDecreaseGini))
+
+#To see what the threshold of signficant should be 
+Eantagonist3_log<- log(Eantagonist3_important$MeanDecreaseGini)
+hist(Eantagonist3_log, 25, main = "er_luc_bg1_4e2_antagonist_p2 model", xlab = "log (mean decrease gini)") 
+Eantagonist_3std <- sd(Eantagonist3_log[is.finite(Eantagonist3_log)], na.rm=TRUE)
+Eantagonist_3mean <- mean(Eantagonist3_log[is.finite(Eantagonist3_log)], na.rm=TRUE)
+Eantagonist_3threshold <- exp(Eantagonist_3mean+Eantagonist_3std)
+
+#values above 1 std 
+Eantagonist3_top <-Eantagonist3_important |>
+  filter(MeanDecreaseGini > Eantagonist_3threshold)
+
+
+#__________________________________________________________________________________
+
+
+#same values
+  #pairwise
+ER_An1An2_values <- intersect(Eantagonist1_top$chemotype, Eantagonist2_top$chemotype)
+ER_An1An3_values <- intersect(Eantagonist1_top$chemotype, Eantagonist3_top$chemotype)
+ER_An2An3_values <- intersect(Eantagonist2_top$chemotype, Eantagonist3_top$chemotype)
+
+  #all three assays
+ER_antagonist_common <- intersect(intersect(Eantagonist1_top$chemotype, Eantagonist2_top$chemotype), Eantagonist3_top$chemotype)
+print(ER_antagonist_common)
+
+```
+
+```{r}
+#venn diagram
+  #making intersects lists
+ER_antagonist_allthree <- c(ER_antagonist_common)
+ER_An1An2_names <- c(ER_An1An2_values)
+ER_An1An3_names <- c(ER_An1An3_values)
+ER_An2An3_names <- c(ER_An2An3_values)
+
+  #making files lists
+Eantagonist1_top_listforvenndiagram <- c(Eantagonist1_top$chemotypes)
+Eantagonist2_top_listforvenndiagram <- c(Eantagonist2_top$chemotypes)
+Eantagonist3_top_listforvenndiagram <- c(Eantagonist3_top$chemotypes)
+
+
+
+  #making Venndiagram object
+ER_antagonist_venndiagram <- venn.diagram(list(er_bla_antagonist_p1=Eantagonist1_top_listforvenndiagram, er_luc_bg1_4e2_antagonist_p1=Eantagonist2_top_listforvenndiagram, er_luc_bg1_4e2_antagonist_p2=Eantagonist3_top_listforvenndiagram),
+                  fill = c("orange", "blue", "pink"),
+                  filename=NULL)
+
+
+grid.newpage()
+grid.draw(ER_antagonist_venndiagram) 
+
+
+```
+
+Same as agonist, weird
+
+Validation of most important ER hits chemotypes for both agonist and antagonist
+
+Agonist: er_bla_agonist_p2
+
+```{r}
+#cut files to have only certain column
+er_bla_agonist_p2_onlyimportantcolumns.2 <- er_bla_agonist_p2.2 |>
+  select(X, Aromatic.Ring...1, X6M.ring...1, target)
+
+er_bla_agonist_p2_onlyimportantcolumns.3 <- 
+  er_bla_agonist_p2_onlyimportantcolumns.2 |>
+  select(-X)
+
+#make model
+set.seed(1234)
+er_bla_agonist_p2_onlyimportantcolumns.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_bla_agonist_p2_onlyimportantcolumns.3)
+
+#cross validation 
+set.seed(1234)
+er_bla_agonist_p2_onlyimportantcolumns.folds <- vfold_cv(er_bla_agonist_p2_onlyimportantcolumns.3, v=5)
+
+set.seed(1234)
+er_bla_agonist_p2_onlyimportantcolumns.cv <-
+  rf_workflow |>
+  fit_resamples(er_bla_agonist_p2_onlyimportantcolumns.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(er_bla_agonist_p2_onlyimportantcolumns.cv)
+#accuracy: 0.9466815
+#collect_metrics(er_bla_agonist_p2.cv)
+#accuracy: 0.9588106
+
+#auc 
+er_bla_agonist_p2_onlyimportantcolumns.roc <- er_bla_agonist_p2_onlyimportantcolumns.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+
+#Graph to compare old to new
+ggplot() + 
+  geom_path(data = er_bla_agonist_p2.roc, aes (x=1 - specificity, y = sensitivity, color = "blue")) +
+  geom_path(data = er_bla_agonist_p2_onlyimportantcolumns.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
+
+  
+  
+  labs(color = "Model") +
+  scale_color_manual(values = (c("blue","red")), 
+                     labels = c("Full model (all chemotypes), accuracy: 0.9588106", "New model (only top chemotypes), accuracy: 0.9466815")) +
+  geom_abline(lty=3) +
+  coord_equal() +
+  theme_bw() +
+  ggtitle("Comparison of er_bla_agonist_p2 models")
+
+```
+
+not good
+
+Antagonist: er_luc_bg1_4e2_antagonist_p1
+
+```{r}
+#cut files to have only certain column
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.2 <-
+  er_luc_bg1_4e2_antagonist_p1.2 |>
+  select(X, Aromatic.Ring...1, X6M.ring...1, target)
+
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.3 <- 
+  er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.2 |>
+  select(-X)
+
+#make model
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.rf_cls_fit <- rf_cls_spec |>
+  fit(target ~ ., data = er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.3)
+
+
+#cross validation 
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.folds <- vfold_cv(er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.3, v=5)
+
+set.seed(1234)
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.cv <-
+  rf_workflow |>
+  fit_resamples(er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.folds, 
+                control = control_resamples(save_pred = TRUE)) 
+
+collect_metrics(er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.cv)
+#accuracy: 0.9457971	
+#collect_metrics(er_luc_bg1_4e2_antagonist_p1.cv)
+#accuracy: 0.9517049
+
+#auc 
+er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.roc <- er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.cv |>
+  collect_predictions() |>
+  roc_curve(target, .pred_0)
+
+#Graph to compare old to new
+ggplot() + 
+  geom_path(data = er_luc_bg1_4e2_antagonist_p1.roc, aes (x=1 - specificity, y = sensitivity, color = "blue")) +
+  geom_path(data = er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
+
+  
+  
+  labs(color = "Model") +
+  scale_color_manual(values = (c("blue","red")), 
+                     labels = c("Full model (all chemotypes), accuracy: 0.9517049", "New model (only top chemotypes), accuracy: 0.9457971")) +
+  geom_abline(lty=3) +
+  coord_equal() +
+  theme_bw() +
+  ggtitle("Comparison of er_luc_bg1_4e2_antagonist_p1 models")
+
+
+```
 
 **Conclusion**
+
+Predictive chemotypes ( C..C..A..A, CC.C..C.A, A.A..A..A, X5.M.ring, C.C.C.C, C.C, C.C.A.A, X6M.ring...1) for Androgen receptor agonists should be further explored as potential factors for PFAS toxicity.
