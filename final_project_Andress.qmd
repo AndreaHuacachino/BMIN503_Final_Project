@@ -61,7 +61,7 @@ This research question is interdisciplinary by nature due to its ties with envir
 
 ### Dataset description
 
-The datasets used are a combination of datasets from Tox21 and CompToxAI. Tox21 is a database maintained by the U.S. EPA, National Toxicology Program (NTP), National Center for Advancing Translational Sciences (NCATS), and the Food and Drug Administration (FDA). Tox21 uses approximately 70 high-throughput assays covering over 125 important processes in the body to generate information about thousands of compounds. I have chosen the assays (see list in methods) most relevant to the project. All assays contained Androgen Receptor and Estrogen Receptor targets. The data reported in Tox21 assays contains pharmacological information such as identity, assay outcome, AC50, efficacy, activity, hill coefficient, among other information. In order to reduce the variables of outcomes, CompToxAI was used.
+The datasets used are a combination of datasets from Tox21 and CompToxAI. Tox21 is a database maintained by the U.S. EPA, National Toxicology Program (NTP), National Center for Advancing Translational Sciences (NCATS), and the Food and Drug Administration (FDA). Tox21 uses approximately 70 high-throughput assays covering over 125 important processes in the body to generate information about thousands of compounds. I have chosen the assays (see list in methods) most relevant to the project. All assays contained androgen receptor and estrogen receptor targets. The data reported in Tox21 assays contains pharmacological information such as identity, assay outcome, AC50, efficacy, activity, hill coefficient, among other information. In order to reduce the variables of outcomes, CompToxAI was used.
 
 ComptoxAI is a toolkit designed to enable AI and data science research in computational toxicology maintained by Dr. Joseph Romano at Penn. ComptoxAI has a function to build datasets for QSAR. In this, it will predict how likely it is to be toxic using all the assay information from Tox21 and reduce it to one value. CompToxAI also provides structural data of the compounds which is not supplied by the original Tox21 assay data. The structural data is reported in MACCS Fingerprints. Each row of the table is an individual compound while each column reports the presence or absence of a particular chemotype (MACCS fingerprint). There are 166 chemotypes in the MACCS fingerprint. All data is reported in binary (0 or 1) except for the ID column. MACCS fingerprint is based on the SMARTS pattern to describe chemicals. The MACCS Fingerprint key can be found [here](https://list.indiana.edu/sympa/arc/chminf-l/2007-11/msg00058.html)
 
@@ -161,7 +161,7 @@ Specific models were created using each dataset (assay) using the following step
 3.  Then the gini_importance score was taken to see top variables that influence the model.
 4.  Finally, the model was cross validated. First 5 folds were created for the dataset, then the folds were passed through the workflow. The metrics of the cross validation were printed to evaluate the model and the ROC curve was saved onto a variable for later graphing.
 
-### Androgen Receptor models
+### Androgen receptor models
 
 Assay: ar_bla_agonist_p1
 
@@ -409,7 +409,7 @@ ggplot() +
   ggtitle("AUC of ML models of Androgen Receptor Toxicity")
 ```
 
-### Estrogen Receptor models
+### Estrogen receptor models
 
 Assay: er_bla_agonist_p2
 
@@ -669,16 +669,16 @@ Compound or molecule can interact with the biological target in various ways to 
 
 It is important to separate the models into four major groups:
 
-1.  Androgen Receptor agonist
-2.  Androgen Receptor antagonist
-3.  Estrogen Receptor agonist
-4.  Estrogen Receptor antagonist
+1.  Androgen receptor agonist
+2.  Androgen receptor antagonist
+3.  Estrogen receptor agonist
+4.  Estrogen receptor antagonist
 
 This is done since a compound that would be toxic to the androgen receptor by being an agonist for the receptor would in theory be structurally different from an androgen receptor antagonist. Same idea is held true for the the estrogen receptor.
 
 For each major group, the mean decrease gini was obtained and arranged in a descending order. Then the values were converted to logarithmic to get the logarithmic distribution of the values. The mean and standard deviation of the distribution was taken. The threshold for what was considered a significant mean decrease gini score was determined by any value that was above one standard deviation of the mean. All top values were stored into a variable for future use.
 
-### Androgen Receptor agonist
+### Androgen receptor agonist
 
 ```{r}
 #AR agonist assays: ar_bla_agonist_p1, ar_mda_kb2_luc_agonist_p1, ar_mda_kb2_luc_agonist_p3
@@ -776,7 +776,7 @@ agonist3_top_listforvenndiagram <- c(agonist3_top$chemotypes)
   #making Venndiagram object
 AR_agonist_venndiagram <- venn.diagram(list(ar_bla_agonist_p1=agonist1_top_listforvenndiagram, ar_mda_kb2_luc_agonist_p1=agonist2_top_listforvenndiagram, ar_mda_kb2_luc_agonist_p3=agonist3_top_listforvenndiagram),
                   fill = c("orange", "blue", "pink"),
-                  filename=NULL, 'cat.just' = list(c(1.5,-2),c(0.5,1),c(0,-3)) )
+                  filename=NULL, 'cat.just' = list(c(1.35,-2),c(0.5,1),c(0.2,-3)) )
 
 
 grid.newpage()
@@ -828,7 +828,7 @@ ggplot() +
   ggtitle("Comparison of ar_mda_kb2_luc_agonist_p1 models")
 ```
 
-### Androgen Receptor antagonist
+### Androgen receptor antagonist
 
 ```{r}
 #AR antagonist assays: ar_bla_antagonist_p1, ar_mda_kb2_luc_antagonist_p1, ar_mda_kb2_luc_antagonist_p2
@@ -911,7 +911,7 @@ print(AR_antagonist_common)
 
 No common chemotype makes them androgen receptor antagonist in all assays analyzed. Further analysis did not take place.
 
-### Estrogen Receptor agonist
+### Estrogen receptor agonist
 
 ```{r}
 #ER agonist assays: er_bla_agonist_p2, er_luc_bg1_4e2_agonist_p2, er_luc_bg1_4e2_agonist_p4
@@ -1056,14 +1056,14 @@ ggplot() +
   geom_path(data = er_bla_agonist_p2_onlyimportantcolumns.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
   labs(color = "Model") +
   scale_color_manual(values = (c("blue","red")), 
-                     labels = ~ stringr::str_wrap(c("Full model (all chemotypes), accuracy: 0.9588106, auc: 0.5000000", "New model (only top chemotypes), accuracy: 0.9466815, auc: 0.5000000"), width = 20)) +
+                     labels = ~ stringr::str_wrap(c("Full model (all chemotypes), accuracy: 0.9588106, auc: 0.8225909", "New model (only top chemotypes), accuracy: 0.9466815, auc: 0.5000000"), width = 20)) +
   geom_abline(lty=3) +
   coord_equal() +
   theme_bw() +
   ggtitle("Comparison of er_bla_agonist_p2 models")
 ```
 
-### Estrogen Receptor antagonist
+### Estrogen receptor antagonist
 
 ```{r}
 #ER antagonist assays: er_bla_antagonist_p1, er_luc_bg1_4e2_antagonist_p1, er_luc_bg1_4e2_antagonist_p2
@@ -1208,7 +1208,7 @@ ggplot() +
   geom_path(data = er_luc_bg1_4e2_antagonist_p1_onlyimportantcolumns.roc, aes (x=1 - specificity, y = sensitivity, color = "red")) +
   labs(color = "Model") +
   scale_color_manual(values = (c("blue","red")), 
-                     labels = ~ stringr::str_wrap(c("Full model (all chemotypes), accuracy: 0.9517049, auc: 0.5000000", "New model (only top chemotypes), accuracy: 0.9457971, auc: 0.5000000"), width = 20)) +
+                     labels = ~ stringr::str_wrap(c("Full model (all chemotypes), accuracy: 0.9517049, auc: 0.8667600", "New model (only top chemotypes), accuracy: 0.9457971, auc: 0.5000000"), width = 20)) +
   geom_abline(lty=3) +
   coord_equal() +
   theme_bw() +
@@ -1217,31 +1217,43 @@ ggplot() +
 
 ## Conclusion
 
-Out of all groups analyzed, only the androgen receptor agonist models had chemotypes that were able to predict the toxicity of PFAS. Therefore, predictive chemotypes (C..C..A..A, CC.C..C.A, A.A..A..A, X5.M.ring, C.C.C.C, C.C, C.C.A.A, X6M.ring...1) for Androgen receptor agonist should be further explored as potential factors for PFAS toxicity.
+Out of all groups analyzed, only the androgen receptor agonist models had chemotypes that were able to predict the toxicity of PFAS. Therefore, predictive chemotypes (C..C..A..A, CC.C..C.A, A.A..A..A, X5.M.ring, C.C.C.C, C.C, C.C.A.A, X6M.ring...1) for androgen receptor agonist should be further explored as potential factors for PFAS toxicity.
 
-MACCS Fingerprint decipher (used Smarts.plus to visualize)
+### Significant androgen receptor chemotypes 
 
-C..C..A..A : (26) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_26.png)
+Smarts.plus is a web based tool that can read SMARTS strings and convert them to visual representations. Since the chemotypes in the MACCS fingerprint are in SMARTS, this tool was used to visualize the results. Note that the ring structures (MACCS Fingerprint 96 and MACCS Fingerprint 145) were unable to be visualized, so the simplest carbon ring system was used to represent those chemotypes.
 
-CC.C..C.A : (66) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_66.png) A.A..A..A : (105) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_105.png)
+C..C..A..A (MACCS Fingerprint 26) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_26.png)
 
-X5.M.ring : (96)
+CC.C..C.A : (MACCS Fingerprint 66) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_66.png) A.A..A..A : (MACCS Fingerprint 105) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_105.png)
+
+X5.M.ring : (MACCS Fingerprint 96)
 
 ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_96.png)
 
-C.C.C.C : (50) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_50.png)
+C.C.C.C : (MACCS Fingerprint 50) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_50.png)
 
-C.C : (99) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_99.png)
+C.C : (MACCS Fingerprint 99) ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_99.png)
 
-C.C.A.A : (76)
+C.C.A.A : (MACCS Fingerprint 76)
 
 \*Note: different than chemotype (26) due to the specification of the atoms environment ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_76.png)
 
-X6M.ring...1 : (145)
+X6M.ring...1 : (MACCS Fingerprint 145)
 
 ![](https://raw.githubusercontent.com/AndreaHuacachino/BMIN503_Final_Project/master/chemotype_145.png)
 
+### Limitations
+
+The first potential limitation of the study was due to computational power. The models were created using 100 trees, and validated 5 cross fold.
+
 A potential limitation of the study might be the validation of the top chemotypes through making models only with the top chemotypes. Estrogen receptor agonist and antagonist only had 2 chemotypes that were significant and in common. This great reduction of features must have greatly impacted the predictive abilities of the model.
+
+Another limitation involves the final visualization of the chemotypes. The SMARTS system has dedicated programs to deciphering the chemical structure and properties that were not used in this project.
+
+### Future Directions
+
+These results are interesting and should be followed up on. A clear next step is to test the androgran receptor agonist models on unseen data, perhaps on all 15,000 known PFAS congers. The predictions from the model should also be validated experimentally, which is possible given the TOX21 public assay protocols. The interactions between the chemotypes and the androgen receptor should also be explored and visualized through molecular docking simulations.
 
 ## Acknowledgments
 
